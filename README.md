@@ -20,3 +20,9 @@ A project by AlbertUnruh.
 # Getting Started
 %GETTING STARTED% 
 -->
+
+
+---
+
+## ToDo
+A list of ToDo's can be found here: https://github.com/AlbertUnruh/SSD-roster/issues/1
