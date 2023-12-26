@@ -7,12 +7,14 @@ name = "pypi"
 cryptography = "~=41.0.7"
 fastapi = "~=0.106.0"
 orjson = "~=3.9.10"
-pydantic = "~=2.5.3"
+pydantic = { version = "~=2.5.3", extras = ["email"] }
 pydantic-settings = "~=2.1.0"
 python-dotenv = "~=1.0.0"
+python-multipart = "~=0.0.6"
 pyyaml = "~=6.0.1"
 redis = "~=5.0.1"
 sqlalchemy = "~=2.0.23"
+uvicorn = { version = "~=0.25.0", extras = ["standard"] }
 jinja2 = "~=3.1.2"
 
 [dev-packages]
