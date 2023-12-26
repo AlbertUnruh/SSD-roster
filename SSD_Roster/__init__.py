@@ -4,8 +4,3 @@ __version__ = "0.0.0a"
 __license__ = "GNU AGPLv3"
 __copyright__ = f"Copyright 2023-present (c) {__author__}"
 __url__ = "https://github.com/AlbertUnruh/SSD-roster"
-
-from .src import database as database
-from .src import errors as errors
-from .src import permissions as permissions
-from .src import translations as translations
