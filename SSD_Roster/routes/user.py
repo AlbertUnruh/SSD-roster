@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+from fastapi.responses import HTMLResponse
 
 from SSD_Roster.src.models import UserID
 
@@ -12,6 +13,7 @@ router = APIRouter(
 @router.get(
     "/",
     summary="Returns a list of all users with their access level",
+    response_class=HTMLResponse,
 )
 async def users():
     return "ToDo: a list containing every user with their respective access level"
@@ -21,6 +23,7 @@ async def users():
     "/{user_id}/",
     summary="Displays a user",
     responses={404: {"description": "Not Found"}},
+    response_class=HTMLResponse,
 )
 async def see_user(
     user_id: UserID,

@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+from fastapi.responses import HTMLResponse
 
 from SSD_Roster.src.models import UserID, PageID
 
@@ -12,6 +13,7 @@ router = APIRouter(
 @router.get(
     "/",
     summary="Gives an overview what can be done here",
+    response_class=HTMLResponse,
 )
 async def overview():
     return "ToDo: create roster, function to search for other timetables"
@@ -21,6 +23,7 @@ async def overview():
     "/{user_id}",
     summary="Displays the timetable of an user",
     responses={404: {"description": "Not Found"}},
+    response_class=HTMLResponse,
 )
 async def see_user(
     user_id: UserID,

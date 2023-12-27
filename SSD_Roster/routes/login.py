@@ -1,7 +1,7 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Form
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, HTMLResponse
 
 from pydantic import SecretStr
 
@@ -15,6 +15,7 @@ router = APIRouter(
 @router.get(
     "/",
     summary="Displayed page to login",
+    response_class=HTMLResponse,
 )
 async def login():
     return "press somewhere to log in..."

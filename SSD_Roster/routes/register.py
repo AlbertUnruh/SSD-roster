@@ -1,7 +1,7 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Form
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, HTMLResponse
 
 from pydantic import EmailStr, PastDate
 
@@ -14,6 +14,7 @@ router = APIRouter(
 @router.get(
     "/",
     summary="Displayed page to register",
+    response_class=HTMLResponse,
 )
 async def register():
     return "press somewhere to register..."
