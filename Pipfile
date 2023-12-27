@@ -5,7 +5,7 @@ name = "pypi"
 
 [packages]
 cryptography = "~=41.0.7"
-fastapi = "~=0.106.0"
+fastapi = "~=0.108.0"
 orjson = "~=3.9.10"
 pydantic = { version = "~=2.5.3", extras = ["email"] }
 pydantic-settings = "~=2.1.0"
