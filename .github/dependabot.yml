@@ -1,0 +1,12 @@
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "friday"
+      time: "14:00"
+    target-branch: "develop"
+    pull-request-branch-name:
+      separator: "-"
+    open-pull-requests-limit: 10
