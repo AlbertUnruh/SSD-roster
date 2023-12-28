@@ -121,7 +121,8 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
+.env.prod
+#.env  # ".env" can be versioned since ".env.prod" overrides *the important stuff*
 .venv
 env/
 venv/

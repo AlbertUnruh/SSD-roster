@@ -25,6 +25,18 @@ async def roster():
 
 
 @router.get(
+    "/pdf",
+    summary="Redirects to the download of the current roster",
+    response_class=RedirectResponse,
+)
+async def roster_pdf():
+    date = datetime.utcnow()
+    year = date.year
+    week = date.isocalendar()[1]
+    return router.url_path_for("download_roster", year=year, week=week)
+
+
+@router.get(
     "/{year}/{week}/",
     summary="Displays the official roster",
     responses={404: {"description": "Not Found"}},
@@ -50,4 +62,8 @@ async def download_roster(
     year: Year,
     week: Week,
 ):
-    return Response(f"SSD-roster-{year}-{week}.pdf", media_type="application/pdf")
+    return Response(
+        b"",
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="SSD-roster-{year}-{week}.pdf"'},
+    )
