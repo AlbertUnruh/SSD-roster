@@ -4,6 +4,7 @@ __all__ = ("SETTINGS",)
 # standard library
 from pathlib import Path
 
+# third party
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # typing
