@@ -81,6 +81,7 @@ extend-ignore =
 
 exclude = .git,__pycache__,vendor/*
 max-line-length = 120
-known-modules = :[vendor,SSD_Roster]
+known-modules = :[vendor,SSD_Roster,annotated_types,cryptography,fastapi,orjson,pydantic,pydantic_settings,python_multipart,pyyaml,redis,sqlalchemy,uvicorn,jinja2]
 per-file-ignores =
-    SSD_Roster/app.py:DAL000
+    SSD_Roster/routes/*.py:ANN201,DAL000
+    SSD_Roster/app.py:ANN201,DAL000

@@ -1,7 +1,7 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Form
-from fastapi.responses import RedirectResponse, HTMLResponse
+from fastapi.responses import HTMLResponse
 
 from pydantic import SecretStr
 

@@ -18,7 +18,7 @@ A project by AlbertUnruh.
 
 <!--
 # Getting Started
-%GETTING STARTED% 
+%GETTING STARTED%
 -->
 
 
