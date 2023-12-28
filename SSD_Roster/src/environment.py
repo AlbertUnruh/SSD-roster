@@ -1,17 +1,22 @@
 __all__ = ("SETTINGS",)
 
 
+# standard library
+from pathlib import Path
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # typing
-from typing import Literal
+from pydantic.networks import AnyUrl, UrlConstraints
+from typing import Annotated, Literal
 
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         case_sensitive=True,
         extra="ignore",
-        env_file=("../.env", "../.env.prod"),
+        env_file=((__env := Path(__file__).parents[2].joinpath(".env")), __env.with_suffix(".prod")),
+        # .env-files are located in the same directory as the python package, not inside it
         env_file_encoding="utf-8",
     )
 
@@ -19,6 +24,7 @@ class Settings(BaseSettings):
     HOST: str
     PORT: int
     ENVIRONMENT: Literal["production", "development"]
+    DATABASE_URL: Annotated[AnyUrl, UrlConstraints(allowed_schemes=["sqlite+aiosqlite"])]
 
 
 SETTINGS = Settings()

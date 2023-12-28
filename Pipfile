@@ -4,8 +4,13 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+#
+#                           /!\ /!\ /!\ IF REQUIREMENTS ARE ADDED /!\ /!\ /!\
+# then they need to be added to ``.isort.cfg`` (into "known_thirdparty") and ``.flake8`` (into "known-modules")
+#
 annotated-types = "~=0.6.0"
 cryptography = "~=41.0.7"
+databases = { version = "~=0.8.0", extras = ["aiosqlite"] }
 fastapi = "~=0.108.0"
 orjson = "~=3.9.10"
 pydantic = { version = "~=2.5.3", extras = ["email"] }
@@ -13,7 +18,7 @@ pydantic-settings = "~=2.1.0"
 python-multipart = "~=0.0.6"
 pyyaml = "~=6.0.1"
 redis = "~=5.0.1"
-sqlalchemy = "~=2.0.23"
+sqlalchemy = "*"  # databases requires following version: sqlalchemy>=1.4.42,<1.5 --> can't use latest version :(
 uvicorn = { version = "~=0.25.0", extras = ["standard"] }
 jinja2 = "~=3.1.2"
 
