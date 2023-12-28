@@ -2,6 +2,8 @@ __all__ = ("SETTINGS",)
 
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+# typing
 from typing import Literal
 
 

@@ -1,9 +1,12 @@
-from fastapi import APIRouter
-from fastapi.responses import RedirectResponse, HTMLResponse, Response
-
+# standard library
 from datetime import datetime
 
-from SSD_Roster.src.models import Year, Week
+# fastapi
+from fastapi import APIRouter
+from fastapi.responses import HTMLResponse, RedirectResponse, Response
+
+# local
+from SSD_Roster.src.models import Week, Year
 
 
 router = APIRouter(

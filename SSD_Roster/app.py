@@ -1,3 +1,4 @@
+# fastapi
 from fastapi import FastAPI
 from fastapi.openapi.docs import (
     get_redoc_html,
@@ -7,6 +8,7 @@ from fastapi.openapi.docs import (
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
+# local
 from SSD_Roster import __version__
 from SSD_Roster.routes import login, register, root, roster, timetable, user
 from SSD_Roster.src.environment import SETTINGS
@@ -64,6 +66,7 @@ app.include_router(user.router)
 
 
 if __name__ == "__main__":
+    # fastapi
     import uvicorn
 
     uvicorn.run(

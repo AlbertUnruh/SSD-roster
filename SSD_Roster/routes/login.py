@@ -1,9 +1,10 @@
+# typing
+from pydantic import SecretStr
 from typing import Annotated
 
+# fastapi
 from fastapi import APIRouter, Form
 from fastapi.responses import HTMLResponse
-
-from pydantic import SecretStr
 
 
 router = APIRouter(

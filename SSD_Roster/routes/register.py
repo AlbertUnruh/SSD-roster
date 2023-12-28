@@ -1,9 +1,11 @@
+# typing
+from pydantic import EmailStr, PastDate
 from typing import Annotated
 
+# fastapi
 from fastapi import APIRouter, Form
 from fastapi.responses import HTMLResponse
 
-from pydantic import EmailStr, PastDate
 
 router = APIRouter(
     prefix="/register",

@@ -6,10 +6,10 @@ __all__ = (
 )
 
 
-from typing import Annotated
+# typing
 import annotated_types
-
 from pydantic import NonNegativeInt
+from typing import Annotated
 
 
 # ---------- TYPES ---------- #

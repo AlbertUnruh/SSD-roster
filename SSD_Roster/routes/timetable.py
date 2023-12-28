@@ -1,7 +1,9 @@
+# fastapi
 from fastapi import APIRouter
 from fastapi.responses import HTMLResponse
 
-from SSD_Roster.src.models import UserID, PageID
+# local
+from SSD_Roster.src.models import PageID, UserID
 
 
 router = APIRouter(
