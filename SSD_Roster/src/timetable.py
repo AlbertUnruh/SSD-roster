@@ -5,10 +5,10 @@ __all__ = ("Timetable",)
 from datetime import date
 
 # local
-from .models import TimetableModel
+from .models import TimetableSchema
 
 
-class Timetable(TimetableModel):
+class Timetable(TimetableSchema):
     @property
     def date_range(self) -> tuple[date, date]:
         """Monday and Friday from the given year/week"""

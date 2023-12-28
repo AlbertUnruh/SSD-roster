@@ -5,10 +5,10 @@ __all__ = ("Roster",)
 from datetime import date
 
 # local
-from .models import RosterModel
+from .models import RosterSchema
 
 
-class Roster(RosterModel):
+class Roster(RosterSchema):
     @property
     def date_range(self) -> tuple[date, date]:
         """Monday and Friday from the given year/week"""

@@ -8,8 +8,8 @@ __all__ = (
     "Availability",
     "Weekday",
     # classes
-    "RosterModel",
-    "TimetableModel",
+    "RosterSchema",
+    "TimetableSchema",
 )
 
 
@@ -54,7 +54,7 @@ class Weekday(IntEnum):
 # ---------- CLASSES ---------- #
 
 
-class RosterModel(BaseModel):
+class RosterSchema(BaseModel):
     user_matrix: Annotated[
         list[
             Annotated[
@@ -95,7 +95,7 @@ class RosterModel(BaseModel):
     date_anchor: tuple[Year, Week]
 
 
-class TimetableModel(BaseModel):
+class TimetableSchema(BaseModel):
     availability_matrix: Annotated[
         list[
             Annotated[
