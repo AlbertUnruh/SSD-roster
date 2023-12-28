@@ -40,7 +40,7 @@ repos:
           - flake8-deprecated
           - flake8-print
           # - flake8-dunder-all  # plugin code for `flake8-dunder-all[DALL]` does not match ^[A-Z]{1,3}[0-9]{0,3}$
-          # using fix from ~~@Aspect1103 instead (PR isn't merged yet)~~ myself as original PR was deleted
+          # using fix from ~~@Aspect1103 instead~~ myself as original PR was deleted
           - git+https://github.com/AlbertUnruh/flake8-dunder-all.git@master
           - flake8-pyi
           - flake8-debugger
