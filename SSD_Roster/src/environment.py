@@ -1,4 +1,4 @@
-__all__ = ("SETTINGS",)
+__all__ = ("settings",)
 
 
 # standard library
@@ -27,5 +27,7 @@ class Settings(BaseSettings):
     ENVIRONMENT: Literal["production", "development"]
     DATABASE_URL: Annotated[AnyUrl, UrlConstraints(allowed_schemes=["sqlite+aiosqlite"])]
 
+    OVERRIDE_422_WITH_400: bool = True
 
-SETTINGS = Settings()
+
+settings = Settings()

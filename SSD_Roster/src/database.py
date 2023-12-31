@@ -5,7 +5,7 @@ __all__ = ()
 import databases
 
 # local
-from .environment import SETTINGS
+from .environment import settings
 
 
-database = databases.Database(SETTINGS.DATABASE_URL)
+database = databases.Database(settings.DATABASE_URL)
