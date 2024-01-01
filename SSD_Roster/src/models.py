@@ -7,19 +7,23 @@ __all__ = (
     # enums
     "Availability",
     "Weekday",
-    # classes
+    "Scope",
+    # schemas
     "RosterSchema",
     "TimetableSchema",
+    "TokenSchema",
+    "UserSchema",
+    # models
 )
 
 
-# standard library
-from enum import IntEnum
+# third party
+from aenum import IntEnum, StrEnum, Unique
 
 # typing
 import annotated_types
-from pydantic import BaseModel, NonNegativeInt
-from typing import Annotated
+from pydantic import BaseModel, EmailStr, NonNegativeInt, PastDate, SecretStr
+from typing import Annotated, Optional
 
 
 # ---------- TYPES ---------- #
@@ -37,13 +41,13 @@ Week = Annotated[int, annotated_types.Ge(1), annotated_types.Le(53)]
 # ---------- ENUMS ---------- #
 
 
-class Availability(IntEnum):
+class Availability(IntEnum, settings=Unique):
     UNAVAILABLE = 0
     AVAILABLE = 1
     ONLY_IF_REQUIRED = 2
 
 
-class Weekday(IntEnum):
+class Weekday(IntEnum, settings=Unique):
     MONDAY = 0
     TUESDAY = 1
     WEDNESDAY = 2
@@ -51,7 +55,36 @@ class Weekday(IntEnum):
     FRIDAY = 4
 
 
-# ---------- CLASSES ---------- #
+class Scope(StrEnum, settings=Unique, init="value __doc__"):
+    # roster
+    SEE_ROSTER = "roster:see", "See any published roster."
+    CREATE_ROSTER = "roster:create", "Create a roster."
+    SUBMIT_ROSTER = "roster:submit", "Submit a roster to an admin to publish it."
+    PUBLISH_ROSTER = "roster:publish", "Publish a submitted roster."
+
+    # calendar
+    MANAGE_OWN_CALENDAR = "calendar:manage-own", "Manage a calendar to set own availabilities."
+    SEE_OTHERS_CALENDAR = "calendar:see-others", "See calendars of other users."
+
+    # inventory
+    MANAGE_INVENTORY = "inventory:manage", "Manage the inventory."
+
+    # permissions
+    MANAGE_PERMISSIONS = "permissions:manage", "Manage permissions of users."
+
+    # users
+    SEE_USERS = "user:see", "See a list of users."
+    MANAGE_USERS = "user:manage", "Manage all users."
+
+    # backups
+    MANAGE_BACKUPS = "backups:manage", "Manage backups."
+
+    @staticmethod
+    def to_oauth2_scopes_dict() -> dict[str, str]:
+        return {scope.value: scope.__doc__ for scope in Scope}  # type: ignore
+
+
+# ---------- SCHEMAS ---------- #
 
 
 class RosterSchema(BaseModel):
@@ -119,3 +152,22 @@ class TimetableSchema(BaseModel):
 
     date_anchor: tuple[Year, Week]
     user_id: UserID
+
+
+class TokenSchema(BaseModel):
+    user_id: Optional[UserID]
+    scopes: list[Scope]
+
+
+class UserSchema(BaseModel):
+    user_id: UserID
+    username: str  # only for login
+    displayed_name: str
+    email: EmailStr
+    email_verified: bool  # first you have to verify your email
+    user_verified: bool  # then an admin has to verify you
+    birthday: PastDate
+    password: Optional[SecretStr]  # password will be set once email is verified
+
+
+# ---------- MODELS ---------- #

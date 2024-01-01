@@ -1,11 +1,15 @@
+# typing
+from typing import Annotated
+
 # fastapi
-from fastapi import APIRouter, FastAPI, Request
+from fastapi import APIRouter, Depends, FastAPI, Request
 from fastapi.openapi.docs import (
     get_redoc_html,
     get_swagger_ui_html,
     get_swagger_ui_oauth2_redirect_html,
 )
 from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.security import OAuth2PasswordRequestForm
 
 # local
 from SSD_Roster.src.templates import templates
@@ -54,3 +58,7 @@ def setup(app: FastAPI):
             redoc_js_url="/static/redoc.standalone.js",
             redoc_favicon_url=app.url_path_for("favicon"),
         )
+
+    @app.post("/token")
+    async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
+        raise NotImplementedError
