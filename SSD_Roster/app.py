@@ -1,3 +1,6 @@
+# standard library
+from contextlib import asynccontextmanager
+
 # fastapi
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
@@ -7,8 +10,20 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 # local
 from SSD_Roster import __version__
 from SSD_Roster.routes import login, register, root, roster, timetable, user
+from SSD_Roster.src.database import database
+from SSD_Roster.src.database import setup as db_setup
 from SSD_Roster.src.environment import settings
 from SSD_Roster.src.exception_handlers import exception_handler, validation_exception_handler
+
+
+@asynccontextmanager
+async def lifespan(_):  # noqa ANN001
+    try:
+        await database.connect()
+        await db_setup()
+        yield
+    finally:
+        await database.disconnect()
 
 
 app = FastAPI(
@@ -17,6 +32,7 @@ app = FastAPI(
     version=__version__,
     docs_url=None,
     redoc_url=None,
+    lifespan=lifespan,
 )
 
 app.mount("/static", StaticFiles(directory="static"), name="static")

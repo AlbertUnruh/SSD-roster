@@ -8,29 +8,37 @@ __all__ = (
     "Availability",
     "Weekday",
     "Scope",
+    "GroupedScope",
     # schemas
     "RosterSchema",
     "TimetableSchema",
     "TokenSchema",
     "UserSchema",
     # models
+    "DBBaseModel",
+    "UserModel",
+    "RosterModel",
+    "TimetableModel",
 )
 
 
 # third party
 from aenum import IntEnum, StrEnum, Unique
+from sqlalchemy import Boolean, Column, Date, Integer, MetaData, Text
+from sqlalchemy.orm import DeclarativeMeta
+from sqlalchemy.orm import registry as sa_registry
 
 # typing
 import annotated_types
-from pydantic import BaseModel, EmailStr, NonNegativeInt, PastDate, SecretStr
+from pydantic import BaseModel, EmailStr, PastDate, SecretStr
 from typing import Annotated, Optional
 
 
 # ---------- TYPES ---------- #
 
 
-UserID = NonNegativeInt
-PageID = NonNegativeInt  # for pagination at /timetable/{user_id}?page={N=>0}
+UserID = Annotated[int, annotated_types.Gt(0)]
+PageID = Annotated[int, annotated_types.Gt(0)]  # for pagination at /timetable/{user_id}?page={N>0}
 
 Year = Annotated[int, annotated_types.Ge(2023), annotated_types.Le(2100)]
 # 2023 is the project's begin and I would be impressed if this project lives until 2100
@@ -82,6 +90,36 @@ class Scope(StrEnum, settings=Unique, init="value __doc__"):
     @staticmethod
     def to_oauth2_scopes_dict() -> dict[str, str]:
         return {scope.value: scope.__doc__ for scope in Scope}  # type: ignore
+
+
+class GroupedScope(StrEnum, init="value __doc__"):
+    PUBLIC = Scope.SEE_ROSTER, "Publicly available, no login required."
+    USER = (
+        " ".join(
+            (  # type: ignore
+                PUBLIC[0],
+                Scope.CREATE_ROSTER,
+                Scope.SUBMIT_ROSTER,
+                Scope.MANAGE_OWN_CALENDAR,
+                Scope.SEE_OTHERS_CALENDAR,
+                Scope.MANAGE_INVENTORY,
+                Scope.SEE_USERS,
+            )
+        ),
+        "Available for every user.",
+    )
+    ADMIN = (
+        " ".join(
+            (  # type: ignore
+                USER[0],
+                Scope.PUBLISH_ROSTER,
+                Scope.MANAGE_PERMISSIONS,
+                Scope.MANAGE_USERS,
+            )
+        ),
+        "Available for admins for management.",
+    )
+    OWNER = " ".join(Scope), "Every scope for the owner"
 
 
 # ---------- SCHEMAS ---------- #
@@ -171,3 +209,120 @@ class UserSchema(BaseModel):
 
 
 # ---------- MODELS ---------- #
+class DBBaseModel(metaclass=DeclarativeMeta):
+    __tablename__: str
+    __abstract__ = True
+    registry: sa_registry = sa_registry()
+    metadata: MetaData = registry.metadata
+    __init__ = registry.constructor
+
+
+class UserModel(DBBaseModel):
+    __tablename__ = "user"
+
+    user_id: Column | UserID = Column(Integer, primary_key=True, unique=True, autoincrement=True, nullable=False)
+    username: Column | str = Column(Text, unique=True, nullable=False)
+    displayed_name: Column | str = Column(Text, nullable=False)
+    email: Column | EmailStr = Column(Text, nullable=False)
+    email_verified: Column | bool = Column(Boolean, nullable=False)
+    user_verified: Column | bool = Column(Boolean, nullable=False)
+    birthday: Column | PastDate = Column(Date, nullable=False)
+    password: Column | Optional[SecretStr] = Column(Text, nullable=True)
+    scopes: Column | str = Column(Text, nullable=False)
+
+
+class RosterModel(DBBaseModel):
+    __tablename__ = "roster"
+
+    # ID will be YYYYWWPII with YYYY = year, WW = week, P = published and II = increment to prevent duplication
+    roster_id: Column | int = Column(Integer, primary_key=True, unique=True, autoincrement=False, nullable=False)
+    year: Column | int = Column(Integer, nullable=False)
+    week: Column | int = Column(Integer, nullable=False)
+    published: Column | bool = Column(Boolean, nullable=False)
+    mo_s1p1: Column | Optional[UserID] = Column(Integer, nullable=True)
+    mo_s1p2: Column | Optional[UserID] = Column(Integer, nullable=True)
+    mo_s1p3: Column | Optional[UserID] = Column(Integer, nullable=True)
+    mo_s2p1: Column | Optional[UserID] = Column(Integer, nullable=True)
+    mo_s2p2: Column | Optional[UserID] = Column(Integer, nullable=True)
+    mo_s2p3: Column | Optional[UserID] = Column(Integer, nullable=True)
+    mo_s3p1: Column | Optional[UserID] = Column(Integer, nullable=True)
+    mo_s3p2: Column | Optional[UserID] = Column(Integer, nullable=True)
+    mo_s3p3: Column | Optional[UserID] = Column(Integer, nullable=True)
+    mo_bp1: Column | Optional[UserID] = Column(Integer, nullable=True)
+    mo_bp2: Column | Optional[UserID] = Column(Integer, nullable=True)
+    mo_bp3: Column | Optional[UserID] = Column(Integer, nullable=True)
+    tu_s1p1: Column | Optional[UserID] = Column(Integer, nullable=True)
+    tu_s1p2: Column | Optional[UserID] = Column(Integer, nullable=True)
+    tu_s1p3: Column | Optional[UserID] = Column(Integer, nullable=True)
+    tu_s2p1: Column | Optional[UserID] = Column(Integer, nullable=True)
+    tu_s2p2: Column | Optional[UserID] = Column(Integer, nullable=True)
+    tu_s2p3: Column | Optional[UserID] = Column(Integer, nullable=True)
+    tu_s3p1: Column | Optional[UserID] = Column(Integer, nullable=True)
+    tu_s3p2: Column | Optional[UserID] = Column(Integer, nullable=True)
+    tu_s3p3: Column | Optional[UserID] = Column(Integer, nullable=True)
+    tu_bp1: Column | Optional[UserID] = Column(Integer, nullable=True)
+    tu_bp2: Column | Optional[UserID] = Column(Integer, nullable=True)
+    tu_bp3: Column | Optional[UserID] = Column(Integer, nullable=True)
+    we_s1p1: Column | Optional[UserID] = Column(Integer, nullable=True)
+    we_s1p2: Column | Optional[UserID] = Column(Integer, nullable=True)
+    we_s1p3: Column | Optional[UserID] = Column(Integer, nullable=True)
+    we_s2p1: Column | Optional[UserID] = Column(Integer, nullable=True)
+    we_s2p2: Column | Optional[UserID] = Column(Integer, nullable=True)
+    we_s2p3: Column | Optional[UserID] = Column(Integer, nullable=True)
+    we_s3p1: Column | Optional[UserID] = Column(Integer, nullable=True)
+    we_s3p2: Column | Optional[UserID] = Column(Integer, nullable=True)
+    we_s3p3: Column | Optional[UserID] = Column(Integer, nullable=True)
+    we_bp1: Column | Optional[UserID] = Column(Integer, nullable=True)
+    we_bp2: Column | Optional[UserID] = Column(Integer, nullable=True)
+    we_bp3: Column | Optional[UserID] = Column(Integer, nullable=True)
+    th_s1p1: Column | Optional[UserID] = Column(Integer, nullable=True)
+    th_s1p2: Column | Optional[UserID] = Column(Integer, nullable=True)
+    th_s1p3: Column | Optional[UserID] = Column(Integer, nullable=True)
+    th_s2p1: Column | Optional[UserID] = Column(Integer, nullable=True)
+    th_s2p2: Column | Optional[UserID] = Column(Integer, nullable=True)
+    th_s2p3: Column | Optional[UserID] = Column(Integer, nullable=True)
+    th_s3p1: Column | Optional[UserID] = Column(Integer, nullable=True)
+    th_s3p2: Column | Optional[UserID] = Column(Integer, nullable=True)
+    th_s3p3: Column | Optional[UserID] = Column(Integer, nullable=True)
+    th_bp1: Column | Optional[UserID] = Column(Integer, nullable=True)
+    th_bp2: Column | Optional[UserID] = Column(Integer, nullable=True)
+    th_bp3: Column | Optional[UserID] = Column(Integer, nullable=True)
+    fr_s1p1: Column | Optional[UserID] = Column(Integer, nullable=True)
+    fr_s1p2: Column | Optional[UserID] = Column(Integer, nullable=True)
+    fr_s1p3: Column | Optional[UserID] = Column(Integer, nullable=True)
+    fr_s2p1: Column | Optional[UserID] = Column(Integer, nullable=True)
+    fr_s2p2: Column | Optional[UserID] = Column(Integer, nullable=True)
+    fr_s2p3: Column | Optional[UserID] = Column(Integer, nullable=True)
+    fr_s3p1: Column | Optional[UserID] = Column(Integer, nullable=True)
+    fr_s3p2: Column | Optional[UserID] = Column(Integer, nullable=True)
+    fr_s3p3: Column | Optional[UserID] = Column(Integer, nullable=True)
+    fr_bp1: Column | Optional[UserID] = Column(Integer, nullable=True)
+    fr_bp2: Column | Optional[UserID] = Column(Integer, nullable=True)
+    fr_bp3: Column | Optional[UserID] = Column(Integer, nullable=True)
+
+
+class TimetableModel(DBBaseModel):
+    __tablename__ = "timetable"
+
+    # ID will be YYYYWWU+ with YYYY = year, WW = week and U+ = user id
+    timetable_id: Column | int = Column(Integer, primary_key=True, unique=True, autoincrement=False, nullable=False)
+    mo_s1: Column | Availability = Column(Integer, nullable=False)
+    mo_s2: Column | Availability = Column(Integer, nullable=False)
+    mo_s3: Column | Availability = Column(Integer, nullable=False)
+    mo_b: Column | Availability = Column(Integer, nullable=False)
+    tu_s1: Column | Availability = Column(Integer, nullable=False)
+    tu_s2: Column | Availability = Column(Integer, nullable=False)
+    tu_s3: Column | Availability = Column(Integer, nullable=False)
+    tu_b: Column | Availability = Column(Integer, nullable=False)
+    we_s1: Column | Availability = Column(Integer, nullable=False)
+    we_s2: Column | Availability = Column(Integer, nullable=False)
+    we_s3: Column | Availability = Column(Integer, nullable=False)
+    we_b: Column | Availability = Column(Integer, nullable=False)
+    th_s1: Column | Availability = Column(Integer, nullable=False)
+    th_s2: Column | Availability = Column(Integer, nullable=False)
+    th_s3: Column | Availability = Column(Integer, nullable=False)
+    th_b: Column | Availability = Column(Integer, nullable=False)
+    fr_s1: Column | Availability = Column(Integer, nullable=False)
+    fr_s2: Column | Availability = Column(Integer, nullable=False)
+    fr_s3: Column | Availability = Column(Integer, nullable=False)
+    fr_b: Column | Availability = Column(Integer, nullable=False)

@@ -15,9 +15,8 @@ from fastapi.security import (  # noqa
     OAuth2PasswordRequestForm,  # noqa
     SecurityScopes,  # noqa
 )  # noqa
-from jose import JWTError, jwt  # noqa
 from passlib.context import CryptContext  # noqa
-from pydantic import BaseModel, ValidationError  # noqa
+from pydantic import BaseModel, SecretStr, ValidationError  # noqa
 from .models import UserID, Scope, TokenSchema, UserSchema  # noqa
 
 
@@ -32,11 +31,17 @@ oauth2_scheme = OAuth2PasswordBearer(
 )
 
 
-def verify_password(plain_password: str, hashed_password: str) -> bool:
+def verify_password(plain_password: str | SecretStr, hashed_password: str | SecretStr) -> bool:
+    if isinstance(plain_password, SecretStr):
+        password = password._secret_value  # noqa
+    if isinstance(hashed_password, SecretStr):
+        password = password._secret_value  # noqa
     return pwd_context.verify(plain_password, hashed_password)
 
 
-def get_password_hash(password: str) -> str:
+def get_password_hash(password: str | SecretStr) -> str:
+    if isinstance(password, SecretStr):
+        password = password._secret_value  # noqa
     return pwd_context.hash(password)
 
 

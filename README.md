@@ -44,5 +44,10 @@ python app.py
 ### Environment Variables
 To change environment variables you can either change them in `.env` (⚠️`.env` is versioned, so the content of the file is "public"⚠️).
 
+> ⚠️⚠️⚠️⚠️⚠️</br>
+> **YOU HAVE TO SET A (VALID) EMAIL ADDRESS FOR ``DATABASE__OWNER_EMAIL`` IN ``.env.prod``!**</br>
+> *You shave to enter a valid Email, even if you've set ``DATABASE__CREATE_OWNER`` to ``false``...*</br>
+> ⚠️⚠️⚠️⚠️⚠️
+
 The recommended way to change environment variables is to create `.env.prod` in the same directory as `.env`.
 Every variable set there will override the one set in `.env`.
