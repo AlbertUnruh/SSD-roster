@@ -10,6 +10,7 @@ name = "pypi"
 #
 aenum = "~=3.1.15"
 annotated-types = "~=0.6.0"
+bcrypt = "~=4.1.2"
 cryptography = "~=41.0.7"
 databases = { version = "~=0.8.0", extras = ["aiosqlite"] }
 fastapi = "~=0.108.0"
