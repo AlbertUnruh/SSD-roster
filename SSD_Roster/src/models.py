@@ -66,6 +66,7 @@ class Weekday(IntEnum, settings=Unique):
 class Scope(StrEnum, settings=Unique, init="value __doc__"):
     # roster
     SEE_ROSTER = "roster:see", "See any published roster."
+    DOWNLOAD_ROSTER = "roster:download", "Download any published roster."
     CREATE_ROSTER = "roster:create", "Create a roster."
     SUBMIT_ROSTER = "roster:submit", "Submit a roster to an admin to publish it."
     PUBLISH_ROSTER = "roster:publish", "Publish a submitted roster."
@@ -100,6 +101,7 @@ class GroupedScope(StrEnum, init="value __doc__"):
         " ".join(
             (  # type: ignore
                 PUBLIC[0],
+                Scope.DOWNLOAD_ROSTER,
                 Scope.CREATE_ROSTER,
                 Scope.SUBMIT_ROSTER,
                 Scope.MANAGE_OWN_CALENDAR,
