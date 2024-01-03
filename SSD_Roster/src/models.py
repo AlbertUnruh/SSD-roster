@@ -75,6 +75,8 @@ class Scope(StrEnum, settings=Unique, init="value __doc__"):
     SEE_OTHERS_CALENDAR = "calendar:see-others", "See calendars of other users."
 
     # inventory
+    SEE_INVENTORY = "inventory:see", "See the inventory."
+    MAKE_INVENTORY = "inventory:make", "Make an inventory."
     MANAGE_INVENTORY = "inventory:manage", "Manage the inventory."
 
     # permissions
@@ -102,7 +104,8 @@ class GroupedScope(StrEnum, init="value __doc__"):
                 Scope.SUBMIT_ROSTER,
                 Scope.MANAGE_OWN_CALENDAR,
                 Scope.SEE_OTHERS_CALENDAR,
-                Scope.MANAGE_INVENTORY,
+                Scope.SEE_INVENTORY,
+                Scope.MAKE_INVENTORY,
                 Scope.SEE_USERS,
             )
         ),
@@ -113,6 +116,7 @@ class GroupedScope(StrEnum, init="value __doc__"):
             (  # type: ignore
                 USER[0],
                 Scope.PUBLISH_ROSTER,
+                Scope.MANAGE_INVENTORY,
                 Scope.MANAGE_PERMISSIONS,
                 Scope.MANAGE_USERS,
             )
