@@ -1,6 +1,3 @@
-from __future__ import annotations
-
-
 __author__ = "Keenan Noack"
 __contributors__ = [
     __author__,
