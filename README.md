@@ -1,4 +1,4 @@
-<a href="https://choosealicense.com/licenses/agpl-3.0/"><img src="https://img.shields.io/github/license/AlbertUnruh/SSD-roster?label=License"  alt="[License]"></a></br>
+<a href="https://choosealicense.com/licenses/agpl-3.0/"><img src="https://img.shields.io/github/license/AlbertUnruh/SSD-roster?label=License" alt="[License]"></a></br>
 <img src="https://img.shields.io/github/checks-status/AlbertUnruh/SSD-roster/develop?label=Checks&logo=GitHub" alt="[Checks]">
 <a href="https://results.pre-commit.ci/latest/github/AlbertUnruh/SSD-roster/develop"><img src="https://results.pre-commit.ci/badge/github/AlbertUnruh/SSD-roster/develop.svg" alt="[precommit.ci]"></a>
 </br>
@@ -42,7 +42,7 @@ python app.py
 ```
 
 ### Environment Variables
-To change environment variables you can either change them in `.env` (⚠️`.env` is versioned, so the content of the file is "public"⚠️).
+To change environment variables you can either change them in `.env` (⚠️ `.env` is versioned, so the content of the file is "public" ⚠️).
 
 > ⚠️⚠️⚠️⚠️⚠️</br>
 > **YOU HAVE TO SET A (VALID) EMAIL ADDRESS FOR ``DATABASE__OWNER_EMAIL`` IN ``.env.prod``!**</br>
