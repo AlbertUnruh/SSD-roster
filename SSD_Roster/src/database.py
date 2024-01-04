@@ -9,11 +9,11 @@ from datetime import date
 # third party
 import databases
 from sqlalchemy import create_engine
-from sqlalchemy.sql.expression import insert, select
 
 # local
+from .abc import DBBaseModel
 from .environment import settings
-from .models import DBBaseModel, GroupedScope, UserModel
+from .models import GroupedScope, UserModel
 from .oauth2 import get_password_hash
 
 
@@ -29,12 +29,12 @@ async def setup() -> bool:
         return False
 
     # is an account with the username already present?
-    if await database.fetch_all(select(UserModel).where(UserModel.username == settings.DATABASE.OWNER_USERNAME)):
+    if await database.fetch_all(UserModel.select().where(UserModel.username == settings.DATABASE.OWNER_USERNAME)):
         return False
 
     # create the account
     await database.execute(
-        insert(UserModel).values(
+        UserModel.insert().values(
             username=settings.DATABASE.OWNER_USERNAME,
             displayed_name=settings.DATABASE.OWNER_USERNAME,
             email=settings.DATABASE.OWNER_EMAIL,

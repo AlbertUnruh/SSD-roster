@@ -15,7 +15,6 @@ __all__ = (
     "TokenSchema",
     "UserSchema",
     # models
-    "DBBaseModel",
     "UserModel",
     "RosterModel",
     "TimetableModel",
@@ -24,14 +23,15 @@ __all__ = (
 
 # third party
 from aenum import IntEnum, StrEnum, Unique
-from sqlalchemy import Boolean, Column, Date, Integer, MetaData, Text
-from sqlalchemy.orm import DeclarativeMeta
-from sqlalchemy.orm import registry as sa_registry
+from sqlalchemy import Boolean, Column, Date, Integer, Text
 
 # typing
 import annotated_types
 from pydantic import BaseModel, EmailStr, PastDate, SecretStr
 from typing import Annotated, Optional
+
+# local
+from .abc import DBBaseModel
 
 
 # ---------- TYPES ---------- #
@@ -215,12 +215,6 @@ class UserSchema(BaseModel):
 
 
 # ---------- MODELS ---------- #
-class DBBaseModel(metaclass=DeclarativeMeta):
-    __tablename__: str
-    __abstract__ = True
-    registry: sa_registry = sa_registry()
-    metadata: MetaData = registry.metadata
-    __init__ = registry.constructor
 
 
 class UserModel(DBBaseModel):
@@ -240,10 +234,9 @@ class UserModel(DBBaseModel):
 class RosterModel(DBBaseModel):
     __tablename__ = "roster"
 
-    # ID will be YYYYWWPII with YYYY = year, WW = week, P = published and II = increment to prevent duplication
-    roster_id: Column | int = Column(Integer, primary_key=True, unique=True, autoincrement=False, nullable=False)
-    year: Column | int = Column(Integer, nullable=False)
-    week: Column | int = Column(Integer, nullable=False)
+    roster_id: Column | int = Column(Integer, primary_key=True, unique=True, autoincrement=True, nullable=False)
+    year: Column | Year = Column(Integer, nullable=False)
+    week: Column | Week = Column(Integer, nullable=False)
     published: Column | bool = Column(Boolean, nullable=False)
     mo_s1p1: Column | Optional[UserID] = Column(Integer, nullable=True)
     mo_s1p2: Column | Optional[UserID] = Column(Integer, nullable=True)
@@ -310,8 +303,10 @@ class RosterModel(DBBaseModel):
 class TimetableModel(DBBaseModel):
     __tablename__ = "timetable"
 
-    # ID will be YYYYWWU+ with YYYY = year, WW = week and U+ = user id
-    timetable_id: Column | int = Column(Integer, primary_key=True, unique=True, autoincrement=False, nullable=False)
+    timetable_id: Column | int = Column(Integer, primary_key=True, unique=True, autoincrement=True, nullable=False)
+    user_id: Column | UserID = Column(Integer, nullable=False)
+    year: Column | Year = Column(Integer, nullable=False)
+    week: Column | Week = Column(Integer, nullable=False)
     mo_s1: Column | Availability = Column(Integer, nullable=False)
     mo_s2: Column | Availability = Column(Integer, nullable=False)
     mo_s3: Column | Availability = Column(Integer, nullable=False)
