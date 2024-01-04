@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 # fastapi
 from fastapi import APIRouter
 from fastapi.responses import HTMLResponse

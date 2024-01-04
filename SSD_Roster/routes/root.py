@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 # typing
 from typing import Annotated
 

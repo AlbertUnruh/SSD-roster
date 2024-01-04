@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 __all__ = (
     "exception_handler",
     "validation_exception_handler",

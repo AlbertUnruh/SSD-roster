@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 # typing
 from pydantic import EmailStr, PastDate
 from typing import Annotated

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 # standard library
 from contextlib import asynccontextmanager
 
