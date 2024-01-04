@@ -140,8 +140,8 @@ class RosterSchema(BaseModel):
             Annotated[
                 list[
                     Annotated[
-                        list[UserID],
-                        annotated_types.MinLen(0),  # this line basically does nothing as length can't be lower than 0
+                        list[Optional[UserID]],
+                        annotated_types.MinLen(3),
                         annotated_types.MaxLen(3),
                     ]
                 ],
@@ -151,7 +151,13 @@ class RosterSchema(BaseModel):
         ],
         annotated_types.MinLen(5),
         annotated_types.MaxLen(5),
-    ] = [[[], [], [], []], [[], [], [], []], [[], [], [], []], [[], [], [], []], [[], [], [], []]]
+    ] = [
+        [[None, None, None], [None, None, None], [None, None, None], [None, None, None]],
+        [[None, None, None], [None, None, None], [None, None, None], [None, None, None]],
+        [[None, None, None], [None, None, None], [None, None, None], [None, None, None]],
+        [[None, None, None], [None, None, None], [None, None, None], [None, None, None]],
+        [[None, None, None], [None, None, None], [None, None, None], [None, None, None]],
+    ]
     """Will generate a matrix with following dimensions: 5[days]*4[slots]*(0-3)[users]"""
     # A slightly more detailed way to represent the matrix
     # Slot/Day   |Monday     |Tuesday    |Wednesday  |Thursday   |Friday
@@ -174,14 +180,80 @@ class RosterSchema(BaseModel):
 
     date_anchor: tuple[Year, Week]
 
+    def to_schema(self) -> RosterSchema:
+        roster_schema = RosterSchema()
+        roster_schema.year = self.date_anchor[0]
+        roster_schema.week = self.date_anchor[1]
+        roster_schema.mo_s1p1 = self.user_matrix[0][0][0]
+        roster_schema.mo_s1p2 = self.user_matrix[0][0][1]
+        roster_schema.mo_s1p3 = self.user_matrix[0][0][2]
+        roster_schema.mo_s2p1 = self.user_matrix[0][1][0]
+        roster_schema.mo_s2p2 = self.user_matrix[0][1][1]
+        roster_schema.mo_s2p3 = self.user_matrix[0][1][2]
+        roster_schema.mo_s3p1 = self.user_matrix[0][2][0]
+        roster_schema.mo_s3p2 = self.user_matrix[0][2][1]
+        roster_schema.mo_s3p3 = self.user_matrix[0][2][2]
+        roster_schema.mo_bp1 = self.user_matrix[0][3][0]
+        roster_schema.mo_bp2 = self.user_matrix[0][3][1]
+        roster_schema.mo_bp3 = self.user_matrix[0][3][2]
+        roster_schema.tu_s1p1 = self.user_matrix[1][0][0]
+        roster_schema.tu_s1p2 = self.user_matrix[1][0][1]
+        roster_schema.tu_s1p3 = self.user_matrix[1][0][2]
+        roster_schema.tu_s2p1 = self.user_matrix[1][1][0]
+        roster_schema.tu_s2p2 = self.user_matrix[1][1][1]
+        roster_schema.tu_s2p3 = self.user_matrix[1][1][2]
+        roster_schema.tu_s3p1 = self.user_matrix[1][2][0]
+        roster_schema.tu_s3p2 = self.user_matrix[1][2][1]
+        roster_schema.tu_s3p3 = self.user_matrix[1][2][2]
+        roster_schema.tu_bp1 = self.user_matrix[1][3][0]
+        roster_schema.tu_bp2 = self.user_matrix[1][3][1]
+        roster_schema.tu_bp3 = self.user_matrix[1][3][2]
+        roster_schema.we_s1p1 = self.user_matrix[2][0][0]
+        roster_schema.we_s1p2 = self.user_matrix[2][0][1]
+        roster_schema.we_s1p3 = self.user_matrix[2][0][2]
+        roster_schema.we_s2p1 = self.user_matrix[2][1][0]
+        roster_schema.we_s2p2 = self.user_matrix[2][1][1]
+        roster_schema.we_s2p3 = self.user_matrix[2][1][2]
+        roster_schema.we_s3p1 = self.user_matrix[2][2][0]
+        roster_schema.we_s3p2 = self.user_matrix[2][2][1]
+        roster_schema.we_s3p3 = self.user_matrix[2][2][2]
+        roster_schema.we_bp1 = self.user_matrix[2][3][0]
+        roster_schema.we_bp2 = self.user_matrix[2][3][1]
+        roster_schema.we_bp3 = self.user_matrix[2][3][2]
+        roster_schema.th_s1p1 = self.user_matrix[3][0][0]
+        roster_schema.th_s1p2 = self.user_matrix[3][0][1]
+        roster_schema.th_s1p3 = self.user_matrix[3][0][2]
+        roster_schema.th_s2p1 = self.user_matrix[3][1][0]
+        roster_schema.th_s2p2 = self.user_matrix[3][1][1]
+        roster_schema.th_s2p3 = self.user_matrix[3][1][2]
+        roster_schema.th_s3p1 = self.user_matrix[3][2][0]
+        roster_schema.th_s3p2 = self.user_matrix[3][2][1]
+        roster_schema.th_s3p3 = self.user_matrix[3][2][2]
+        roster_schema.th_bp1 = self.user_matrix[3][3][0]
+        roster_schema.th_bp2 = self.user_matrix[3][3][1]
+        roster_schema.th_bp3 = self.user_matrix[3][3][2]
+        roster_schema.fr_s1p1 = self.user_matrix[4][0][0]
+        roster_schema.fr_s1p2 = self.user_matrix[4][0][1]
+        roster_schema.fr_s1p3 = self.user_matrix[4][0][2]
+        roster_schema.fr_s2p1 = self.user_matrix[4][1][0]
+        roster_schema.fr_s2p2 = self.user_matrix[4][1][1]
+        roster_schema.fr_s2p3 = self.user_matrix[4][1][2]
+        roster_schema.fr_s3p1 = self.user_matrix[4][2][0]
+        roster_schema.fr_s3p2 = self.user_matrix[4][2][1]
+        roster_schema.fr_s3p3 = self.user_matrix[4][2][2]
+        roster_schema.fr_bp1 = self.user_matrix[4][3][0]
+        roster_schema.fr_bp2 = self.user_matrix[4][3][1]
+        roster_schema.fr_bp3 = self.user_matrix[4][3][2]
+        return roster_schema
+
 
 class TimetableSchema(BaseModel):
     availability_matrix: Annotated[
         list[
             Annotated[
                 list[Availability],
-                annotated_types.MinLen(3),
-                annotated_types.MaxLen(3),
+                annotated_types.MinLen(4),
+                annotated_types.MaxLen(4),
             ]
         ],
         annotated_types.MinLen(5),
@@ -196,9 +268,38 @@ class TimetableSchema(BaseModel):
     # #2 (3./4.) |Y/N/[...]  |Y/N/[...]  |Y/N/[...]  |Y/N/[...]  |Y/N/[...]
     # -----------+-----------+-----------+-----------+-----------+-----------
     # #3 (5./6.) |Y/N/[...]  |Y/N/[...]  |Y/N/[...]  |Y/N/[...]  |Y/N/[...]
+    # -----------+-----------+-----------+-----------+-----------+-----------
+    # #4 (break) |Y/N/[...]  |Y/N/[...]  |Y/N/[...]  |Y/N/[...]  |Y/N/[...]
 
     date_anchor: tuple[Year, Week]
     user_id: UserID
+
+    def to_model(self) -> TimetableModel:
+        timetable_model = TimetableModel()
+        timetable_model.user_id = self.user_id
+        timetable_model.year = self.date_anchor[0]
+        timetable_model.week = self.date_anchor[1]
+        timetable_model.mo_s1 = self.availability_matrix[0][0]
+        timetable_model.mo_s2 = self.availability_matrix[0][1]
+        timetable_model.mo_s3 = self.availability_matrix[0][2]
+        timetable_model.mo_b = self.availability_matrix[0][3]
+        timetable_model.tu_s1 = self.availability_matrix[1][0]
+        timetable_model.tu_s2 = self.availability_matrix[1][1]
+        timetable_model.tu_s3 = self.availability_matrix[1][2]
+        timetable_model.tu_b = self.availability_matrix[1][3]
+        timetable_model.we_s1 = self.availability_matrix[2][0]
+        timetable_model.we_s2 = self.availability_matrix[2][1]
+        timetable_model.we_s3 = self.availability_matrix[2][2]
+        timetable_model.we_b = self.availability_matrix[2][3]
+        timetable_model.th_s1 = self.availability_matrix[3][0]
+        timetable_model.th_s2 = self.availability_matrix[3][1]
+        timetable_model.th_s3 = self.availability_matrix[3][2]
+        timetable_model.th_b = self.availability_matrix[3][3]
+        timetable_model.fr_s1 = self.availability_matrix[4][0]
+        timetable_model.fr_s2 = self.availability_matrix[4][1]
+        timetable_model.fr_s3 = self.availability_matrix[4][2]
+        timetable_model.fr_b = self.availability_matrix[4][3]
+        return timetable_model
 
 
 class TokenSchema(BaseModel):
@@ -216,6 +317,18 @@ class UserSchema(BaseModel):
     birthday: PastDate
     password: Optional[SecretStr]  # password will be set once email is verified
 
+    def to_model(self) -> UserModel:
+        user_model = UserModel()
+        user_model.user_id = self.user_id
+        user_model.username = self.username
+        user_model.displayed_name = self.displayed_name
+        user_model.email = self.email
+        user_model.email_verified = self.email_verified
+        user_model.user_verified = self.user_verified
+        user_model.birthday = self.birthday
+        user_model.password = self.password
+        return user_model
+
 
 # ---------- MODELS ---------- #
 
@@ -232,6 +345,18 @@ class UserModel(DBBaseModel):
     birthday: Column | PastDate = Column(Date, nullable=False)
     password: Column | Optional[SecretStr] = Column(Text, nullable=True)
     scopes: Column | str = Column(Text, nullable=False)
+
+    def to_schema(self) -> UserSchema:
+        return UserSchema(
+            user_id=self.user_id,
+            username=self.username,
+            displayed_name=self.displayed_name,
+            email=self.email,
+            email_verified=self.email_verified,
+            user_verified=self.user_verified,
+            birthday=self.birthday,
+            password=self.password,
+        )
 
 
 class RosterModel(DBBaseModel):
@@ -302,6 +427,43 @@ class RosterModel(DBBaseModel):
     fr_bp2: Column | Optional[UserID] = Column(Integer, nullable=True)
     fr_bp3: Column | Optional[UserID] = Column(Integer, nullable=True)
 
+    def to_schema(self) -> RosterSchema:
+        return RosterSchema(
+            user_matrix=[
+                [
+                    [self.mo_s1p1, self.mo_s1p2, self.mo_s1p3],
+                    [self.mo_s2p1, self.mo_s2p2, self.mo_s2p3],
+                    [self.mo_s3p1, self.mo_s3p2, self.mo_s3p3],
+                    [self.mo_bp1, self.mo_bp2, self.mo_bp3],
+                ],
+                [
+                    [self.tu_s1p1, self.tu_s1p2, self.tu_s1p3],
+                    [self.tu_s2p1, self.tu_s2p2, self.tu_s2p3],
+                    [self.tu_s3p1, self.tu_s3p2, self.tu_s3p3],
+                    [self.tu_bp1, self.tu_bp2, self.tu_bp3],
+                ],
+                [
+                    [self.we_s1p1, self.we_s1p2, self.we_s1p3],
+                    [self.we_s2p1, self.we_s2p2, self.we_s2p3],
+                    [self.we_s3p1, self.we_s3p2, self.we_s3p3],
+                    [self.we_bp1, self.we_bp2, self.we_bp3],
+                ],
+                [
+                    [self.th_s1p1, self.th_s1p2, self.th_s1p3],
+                    [self.th_s2p1, self.th_s2p2, self.th_s2p3],
+                    [self.th_s3p1, self.th_s3p2, self.th_s3p3],
+                    [self.th_bp1, self.th_bp2, self.th_bp3],
+                ],
+                [
+                    [self.fr_s1p1, self.fr_s1p2, self.fr_s1p3],
+                    [self.fr_s2p1, self.fr_s2p2, self.fr_s2p3],
+                    [self.fr_s3p1, self.fr_s3p2, self.fr_s3p3],
+                    [self.fr_bp1, self.fr_bp2, self.fr_bp3],
+                ],
+            ],
+            date_anchor=(self.year, self.week),
+        )
+
 
 class TimetableModel(DBBaseModel):
     __tablename__ = "timetable"
@@ -330,3 +492,16 @@ class TimetableModel(DBBaseModel):
     fr_s2: Column | Availability = Column(Integer, nullable=False)
     fr_s3: Column | Availability = Column(Integer, nullable=False)
     fr_b: Column | Availability = Column(Integer, nullable=False)
+
+    def to_schema(self) -> TimetableSchema:
+        return TimetableSchema(
+            availability_matrix=[
+                [self.mo_s1, self.mo_s2, self.mo_s3, self.mo_b],
+                [self.tu_s1, self.tu_s2, self.tu_s3, self.tu_b],
+                [self.we_s1, self.we_s2, self.we_s3, self.we_b],
+                [self.th_s1, self.th_s2, self.th_s3, self.th_b],
+                [self.fr_s1, self.fr_s2, self.fr_s3, self.fr_b],
+            ],
+            date_anchor=(self.year, self.week),
+            user_id=self.user_id,
+        )
