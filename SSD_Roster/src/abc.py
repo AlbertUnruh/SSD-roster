@@ -1,28 +1,24 @@
 from __future__ import annotations
 
 
-__all__ = ("DBBaseModel",)
+__all__ = (
+    "DBBaseModel",
+    "GroupedScopeStr",
+)
 
 
 # third party
 from sqlalchemy import MetaData
 from sqlalchemy.orm import DeclarativeMeta
 from sqlalchemy.orm import registry as sa_registry
-from sqlalchemy.sql import Insert as sa_Insert
-from sqlalchemy.sql import Select
-from sqlalchemy.sql.expression import insert, select
+from sqlalchemy.sql import Insert, Select, Update
+from sqlalchemy.sql.expression import insert, select, update
 
 # typing
-from typing import Any, ParamSpec, Self
+from typing import Any, ParamSpec
 
 
 _P = ParamSpec("_P", bound=Any)
-
-
-class _Insert(sa_Insert):
-    # the @generative doesn't work with SELF-return for typehints...
-    def values(self, *args: Any, **kwargs: Any) -> Self:
-        return super().values(*args, **kwargs)
 
 
 class DBBaseModel(metaclass=DeclarativeMeta):
@@ -34,9 +30,25 @@ class DBBaseModel(metaclass=DeclarativeMeta):
 
     # may add more sometime
     @classmethod
-    def insert(cls) -> _Insert:
+    def insert(cls) -> Insert:
         return insert(cls)
 
     @classmethod
     def select(cls) -> Select:
         return select(cls)
+
+    @classmethod
+    def update(cls) -> Update:
+        return update(cls)
+
+
+class GroupedScopeStr(str):  # yeah... not really an ABC, but will leave it here...
+    name: str
+    """Name of the group."""
+
+    def __new__(cls, name: str, scopes: str, doc: str):
+        self = super().__new__(cls, scopes)
+        self.name = name
+        self.__str__ = scopes.__str__
+        self.__doc__ = doc
+        return self

@@ -34,7 +34,7 @@ from pydantic import BaseModel, EmailStr, PastDate, SecretStr
 from typing import Annotated, Optional
 
 # local
-from .abc import DBBaseModel
+from .abc import DBBaseModel, GroupedScopeStr
 
 
 # ---------- TYPES ---------- #
@@ -98,12 +98,14 @@ class Scope(StrEnum, settings=Unique, init="value __doc__"):
         return {scope.value: scope.__doc__ for scope in Scope}  # type: ignore
 
 
-class GroupedScope(StrEnum, init="value __doc__"):
-    PUBLIC = Scope.SEE_ROSTER, "Publicly available, no login required."
-    USER = (
+class GroupedScope:  # I know, officially not an Enum...
+    PUBLIC = GroupedScopeStr("PUBLIC", str(Scope.SEE_ROSTER), "Publicly available, no login required.")
+
+    USER = GroupedScopeStr(
+        "USER",
         " ".join(
             (  # type: ignore
-                PUBLIC[0],
+                PUBLIC,
                 Scope.DOWNLOAD_ROSTER,
                 Scope.CREATE_ROSTER,
                 Scope.SUBMIT_ROSTER,
@@ -116,10 +118,12 @@ class GroupedScope(StrEnum, init="value __doc__"):
         ),
         "Available for every user.",
     )
-    ADMIN = (
+
+    ADMIN = GroupedScopeStr(
+        "ADMIN",
         " ".join(
             (  # type: ignore
-                USER[0],
+                USER,
                 Scope.PUBLISH_ROSTER,
                 Scope.MANAGE_INVENTORY,
                 Scope.MANAGE_PERMISSIONS,
@@ -128,7 +132,44 @@ class GroupedScope(StrEnum, init="value __doc__"):
         ),
         "Available for admins for management.",
     )
-    OWNER = " ".join(Scope), "Every scope for the owner"
+
+    OWNER = GroupedScopeStr("OWNER", " ".join(Scope), "Every scope for the owner.")
+
+    @classmethod
+    def _members(cls) -> dict[str, GroupedScopeStr]:
+        return {key: val for key, val in cls.__dict__.items() if key.isupper()}
+
+    @classmethod
+    async def sync_with_db(cls) -> None:
+        # local
+        from .database import database  # circular import
+
+        synced = set()
+
+        # create a record for every scope (if they don't exist)
+        for group, _value in cls._members().items():
+            _scopes = set(_value.split())
+            unsynced_scopes = _scopes - synced
+            synced.update(_scopes)
+
+            for scope in unsynced_scopes:
+                if (await database.fetch_one(ScopeModel.select().where(ScopeModel.scope == scope))) is None:
+                    await database.execute(ScopeModel.insert().values(scope=scope, group_=group))
+
+        grouped_scopes: dict[str, list[str]] = {}
+
+        # now configure the active scopes
+        for group in cls._members():
+            grouped_scopes[group] = []
+            for scope in await database.fetch_all(ScopeModel.select().where(ScopeModel.group_ == group)):
+                grouped_scopes[group].append(scope.scope)
+
+        lower_scopes: list[str] = []  # used to let an ADMIN to what a USER can do ect.
+
+        # now actually set the correct values
+        for key, value in grouped_scopes.items():
+            lower_scopes.extend(value)
+            setattr(cls, key, GroupedScopeStr(key, " ".join(lower_scopes), getattr(cls, key).__doc__))
 
 
 # ---------- SCHEMAS ---------- #
@@ -505,3 +546,10 @@ class TimetableModel(DBBaseModel):
             date_anchor=(self.year, self.week),
             user_id=self.user_id,
         )
+
+
+class ScopeModel(DBBaseModel):
+    __tablename__ = "scopes"
+
+    scope: Column | str = Column(Text, primary_key=True, unique=True, nullable=False)
+    group_: Column | str = Column(Text, nullable=False)

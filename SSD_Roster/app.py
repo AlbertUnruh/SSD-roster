@@ -16,6 +16,7 @@ from SSD_Roster.src.database import database
 from SSD_Roster.src.database import setup as db_setup
 from SSD_Roster.src.environment import settings
 from SSD_Roster.src.exception_handlers import exception_handler, validation_exception_handler
+from SSD_Roster.src.models import GroupedScope
 
 
 @asynccontextmanager
@@ -23,6 +24,7 @@ async def lifespan(_):  # noqa ANN001
     try:
         await database.connect()
         await db_setup()
+        await GroupedScope.sync_with_db()
         yield
     finally:
         await database.disconnect()

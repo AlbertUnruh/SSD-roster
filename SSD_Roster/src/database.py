@@ -37,7 +37,7 @@ async def setup() -> bool:
 
     # create the account
     await database.execute(
-        UserModel.insert().values(
+        UserModel.insert().values(  # type: ignore
             username=settings.DATABASE.OWNER_USERNAME,
             displayed_name=settings.DATABASE.OWNER_USERNAME,
             email=settings.DATABASE.OWNER_EMAIL,
@@ -45,7 +45,7 @@ async def setup() -> bool:
             user_verified=True,
             birthday=date(2000, 1, 1),
             password=get_password_hash(settings.DATABASE.OWNER_PASSWORD),
-            scopes=GroupedScope.OWNER,
+            scopes=GroupedScope.OWNER.name,
         )
     )
     return True
