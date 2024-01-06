@@ -11,8 +11,8 @@ __all__ = (
 from sqlalchemy import MetaData
 from sqlalchemy.orm import DeclarativeMeta
 from sqlalchemy.orm import registry as sa_registry
-from sqlalchemy.sql import Insert, Select, Update
-from sqlalchemy.sql.expression import insert, select, update
+from sqlalchemy.sql import Delete, Insert, Select, Update
+from sqlalchemy.sql.expression import delete, insert, select, update
 
 # typing
 from typing import Any, ParamSpec
@@ -40,6 +40,10 @@ class DBBaseModel(metaclass=DeclarativeMeta):
     @classmethod
     def update(cls) -> Update:
         return update(cls)
+
+    @classmethod
+    def delete(cls) -> Delete:
+        return delete(cls)
 
 
 class GroupedScopeStr(str):  # yeah... not really an ABC, but will leave it here...

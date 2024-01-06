@@ -44,6 +44,7 @@ class Settings(BaseSettings):
     HOST: str
     PORT: int
     ENVIRONMENT: Literal["production", "development"]
+    ALLOW_DEMO_USERS_IN_DEVELOPMENT: bool
     DATABASE: Database
     TOKEN: Token
 

@@ -2,7 +2,7 @@ __author__ = "Keenan Noack"
 __contributors__ = [
     __author__,
 ]
-__version__ = "0.2.0a"
+__version__ = "0.2.1a"
 __license__ = "GNU AGPLv3"
 __copyright__ = f"Copyright 2023-present (c) {__author__}"
 __url__ = "https://github.com/AlbertUnruh/SSD-roster"
