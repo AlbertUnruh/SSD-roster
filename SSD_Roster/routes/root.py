@@ -1,15 +1,20 @@
 from __future__ import annotations
 
+# typing
+from typing import Annotated
+
 # fastapi
-from fastapi import APIRouter, FastAPI, Request
+from fastapi import APIRouter, Depends, FastAPI, HTTPException, Request
 from fastapi.openapi.docs import (
     get_redoc_html,
     get_swagger_ui_html,
     get_swagger_ui_oauth2_redirect_html,
 )
 from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.security import OAuth2PasswordRequestForm
 
 # local
+from SSD_Roster.src.oauth2 import authenticate_user, create_access_token
 from SSD_Roster.src.templates import templates
 
 
@@ -56,3 +61,13 @@ def setup(app: FastAPI):
             redoc_js_url="/static/redoc.standalone.js",
             redoc_favicon_url=app.url_path_for("favicon"),
         )
+
+    @app.post("/token")
+    async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
+        user = await authenticate_user(form_data.username, form_data.password)
+        if user is False:
+            raise HTTPException(status_code=400, detail="Incorrect username or password")
+
+        access_token = create_access_token(sub=user.user_id, scopes=form_data.scopes)
+
+        return {"access_token": access_token, "token_type": "bearer"}

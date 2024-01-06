@@ -54,7 +54,7 @@ async def roster_pdf():
 async def see_roster(
     year: Year,
     week: Week,
-    user: Annotated[UserSchema, Security(get_current_user, scopes=[Scope.SEE_ROSTER])],
+    user: Annotated[UserSchema | None, Security(get_current_user, scopes=[Scope.SEE_ROSTER])],
 ):
     return f"roster from week {week} from {year}"
 
@@ -71,7 +71,7 @@ async def see_roster(
 async def download_roster(
     year: Year,
     week: Week,
-    user: Annotated[UserSchema, Security(get_current_user, scopes=[Scope.DOWNLOAD_ROSTER])],
+    user: Annotated[UserSchema | None, Security(get_current_user, scopes=[Scope.DOWNLOAD_ROSTER])],
 ):
     return Response(
         b"",

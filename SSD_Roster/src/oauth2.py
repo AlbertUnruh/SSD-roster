@@ -10,7 +10,7 @@ __all__ = (
 
 
 # standard library
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 # third party
 from jwt import decode as jwt_decode
@@ -23,7 +23,7 @@ from pydantic import SecretStr, ValidationError
 from typing import Annotated, Literal, Optional
 
 # fastapi
-from fastapi import Depends, HTTPException
+from fastapi import Cookie, Depends, HTTPException
 from fastapi.security import (
     OAuth2PasswordBearer,
     SecurityScopes,
@@ -41,7 +41,7 @@ pwd_context = CryptContext(
 )
 
 oauth2_scheme = OAuth2PasswordBearer(
-    tokenUrl="login",
+    tokenUrl="token",
     scopes=Scope.to_oauth2_scopes_dict(),
 )
 
@@ -80,15 +80,20 @@ async def authenticate_user(
 
 def create_access_token(
     sub: str,
+    scopes: Optional[str] = None,
     iat: Optional[datetime] = None,
     exp: Optional[datetime] = None,
 ) -> str:
+    if scopes is None:
+        scopes = ""
+    if isinstance(scopes, list):
+        scopes = " ".join(scopes)
     if iat is None:
-        iat = datetime.utcnow()
+        iat = datetime.utcnow().replace(tzinfo=timezone.utc)
     if exp is None:
-        exp = datetime.utcnow() + timedelta(hours=settings.TOKEN.LIFETIME)
+        exp = (datetime.utcnow() + timedelta(hours=settings.TOKEN.LIFETIME)).replace(tzinfo=timezone.utc)
     return jwt_encode(
-        {"sub": sub, "iat": iat, "exp": exp},
+        {"sub": sub, "scopes": scopes, "iat": iat, "exp": exp},
         settings.TOKEN.SECRET_KEY.get_secret_value(),
         settings.TOKEN.ALGORITHM,
     )
@@ -96,8 +101,8 @@ def create_access_token(
 
 async def get_current_user(
     security_scopes: SecurityScopes,
-    token: Annotated[str, Depends(oauth2_scheme)],
-) -> UserSchema:
+    token: Annotated[str, Depends(oauth2_scheme), Cookie()] = "PUBLIC",
+) -> UserSchema | None:
     if security_scopes.scopes:
         authenticate_value = f'Bearer scope="{security_scopes.scope_str}"'
     else:
@@ -106,27 +111,54 @@ async def get_current_user(
         status_code=401, detail="Could not validate credentials", headers={"WWW-Authenticate": authenticate_value}
     )
 
-    try:
-        payload = jwt_decode(token, settings.TOKEN.SECRET_KEY.get_secret_value(), [settings.TOKEN.ALGORITHM])
-        user_id = payload.get("sub")
-        if user_id is None:
-            raise credentials_exception
-        user = await database.fetch_one(UserModel.select().where(UserModel.user_id == int(user_id)))
+    if token == "PUBLIC":  # noqa S105  # not a password, but a default
+        # a public user; ID isn't accessed --> can have any value
+        token_data = TokenSchema(user_id=69, scopes=GroupedScope.PUBLIC.split())
+        user = None
+
+        # skip first validation loop as every granted scope is available for public users
+        token_scopes = []
+        user_scopes = []
+
+    else:
+        try:
+            payload = jwt_decode(token, settings.TOKEN.SECRET_KEY.get_secret_value(), [settings.TOKEN.ALGORITHM])
+            user_id = payload.get("sub")
+            if user_id is None:
+                raise credentials_exception
+
+            token_scopes = []
+            for _s in payload.get("scopes", "").split():  # break down groups
+                if ":" in _s:
+                    token_scopes.append(_s)
+                else:
+                    token_scopes.extend(getattr(GroupedScope, _s).split())
+            token_data = TokenSchema(user_id=user_id, scopes=token_scopes)
+        except (PyJWTError, ValidationError):
+            raise credentials_exception  # noqa R100
+
+        user = await database.fetch_one(UserModel.select().where(UserModel.user_id == token_data.user_id))
         if user is None:
             raise credentials_exception
+        user = UserModel.to_schema(user)
 
-        token_scopes = []
-        for _s in user.scopes.split():  # break down groups
+        user_scopes = []
+        for _s in user.scopes.split():
             if ":" in _s:
-                token_scopes.append(_s)
+                user_scopes.append(_s)
             else:
-                token_scopes.extend(getattr(GroupedScope, _s).split())
-        token_data = TokenSchema(user_id=user_id, scopes=token_scopes)
-    except (PyJWTError, ValidationError, ValueError):
-        raise credentials_exception  # noqa R100
+                user_scopes.extend(getattr(GroupedScope, _s).split())
 
+    credentials_exception.detail = "Not enough permissions"
+
+    # check if token-requested scopes are granted for the user
+    for token_scope in token_scopes:
+        if token_scope not in user_scopes:
+            raise credentials_exception
+
+    # check if security-requested scopes are granted for the token
     for scope in security_scopes.scopes:
         if scope not in token_data.scopes:
-            credentials_exception.detail = "Not enough permissions"
             raise credentials_exception
-    return UserModel.to_schema(user)
+
+    return user
