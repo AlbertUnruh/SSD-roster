@@ -6,6 +6,7 @@ __all__ = (
     "setup",
 )
 
+
 # standard library
 from datetime import date
 

@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "34953c846174d812a6df480475736855a11106b3dbb995ab4541fa73fc0510e6"
+            "sha256": "822e8faa5368f6fd01578654081c5f5b93019e7e5f95254f2951eacc318bcb87"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -26,6 +26,14 @@
             "index": "pypi",
             "version": "==3.1.15"
         },
+        "aiosmtplib": {
+            "hashes": [
+                "sha256:138599a3227605d29a9081b646415e9e793796ca05322a78f69179f0135016a3",
+                "sha256:1e631a7a3936d3e11c6a144fb8ffd94bb4a99b714f2cb433e825d88b698e37bc"
+            ],
+            "markers": "python_version >= '3.7' and python_version < '4.0'",
+            "version": "==2.0.2"
+        },
         "aiosqlite": {
             "hashes": [
                 "sha256:95ee77b91c8d2808bd08a59fbebf66270e9090c3d92ffbf260dc0db0b979577d",
@@ -39,7 +47,6 @@
                 "sha256:563339e807e53ffd9c267e99fc6d9ea23eb8443c08f112651963e24e22f84a5d"
             ],
             "index": "pypi",
-            "markers": "python_version >= '3.8'",
             "version": "==0.6.0"
         },
         "anyio": {
@@ -49,14 +56,6 @@
             ],
             "markers": "python_version >= '3.8'",
             "version": "==4.2.0"
-        },
-        "async-timeout": {
-            "hashes": [
-                "sha256:4640d96be84d82d02ed59ea2b7105a0f7b33abe8703703cd0ab0bf87c427522f",
-                "sha256:7405140ff1230c310e51dc27b3145b9092d659ce68ff733fb0cefe3ee42be028"
-            ],
-            "markers": "python_full_version <= '3.11.2'",
-            "version": "==4.0.3"
         },
         "bcrypt": {
             "hashes": [
@@ -88,9 +87,16 @@
                 "sha256:f70d9c61f9c4ca7d57f3bfe88a5ccf62546ffbadf3681bb1e268d9d2e41c91a7",
                 "sha256:fbe188b878313d01b7718390f31528be4010fed1faa798c5a1d0469c9c48c369"
             ],
-            "index": "pypi",
             "markers": "python_version >= '3.7'",
             "version": "==4.1.2"
+        },
+        "blinker": {
+            "hashes": [
+                "sha256:c3f865d4d54db7abc53758a01601cf343fe55b84c1de4e3fa910e420b438d5b9",
+                "sha256:e6820ff6fa4e4d1d8e2747c2283749c3f547e4fee112b98555cdcdae32996182"
+            ],
+            "markers": "python_version >= '3.8'",
+            "version": "==1.7.0"
         },
         "cffi": {
             "hashes": [
@@ -219,7 +225,7 @@
                 "sha256:a4b0bd1cf55f073b924258d19321b1f3aa74b4b5a71a42c305575dba920e1a44",
                 "sha256:c973053efbeddfef924dc0bd93f6e77a1ea7ee0fce935aea7103c7a3d6d2d637"
             ],
-            "index": "pypi",
+            "markers": "python_version >= '3.8'",
             "version": "==2.1.0.post1"
         },
         "fastapi": {
@@ -229,6 +235,14 @@
             ],
             "index": "pypi",
             "version": "==0.108.0"
+        },
+        "fastapi-mail": {
+            "hashes": [
+                "sha256:9095b713bd9d3abb02fe6d7abb637502aaf680b52e177d60f96273ef6bc8bb70",
+                "sha256:fa5ef23b2dea4d3ba4587f4bbb53f8f15274124998fb4e40629b3b636c76c398"
+            ],
+            "index": "pypi",
+            "version": "==1.4.1"
         },
         "greenlet": {
             "hashes": [
@@ -291,7 +305,7 @@
                 "sha256:fd096eb7ffef17c456cfa587523c5f92321ae02427ff955bebe9e3c63bc9f0da",
                 "sha256:fe754d231288e1e64323cfad462fcee8f0288654c10bdf4f603a39ed923bef33"
             ],
-            "markers": "python_version >= '3' and platform_machine == 'aarch64' or (platform_machine == 'ppc64le' or (platform_machine == 'x86_64' or (platform_machine == 'amd64' or (platform_machine == 'AMD64' or (platform_machine == 'win32' or platform_machine == 'WIN32')))))",
+            "markers": "python_version >= '3' and (platform_machine == 'aarch64' or (platform_machine == 'ppc64le' or (platform_machine == 'x86_64' or (platform_machine == 'amd64' or (platform_machine == 'AMD64' or (platform_machine == 'win32' or platform_machine == 'WIN32'))))))",
             "version": "==3.0.3"
         },
         "h11": {
@@ -358,13 +372,6 @@
             ],
             "index": "pypi",
             "version": "==3.1.2"
-        },
-        "jose": {
-            "hashes": [
-                "sha256:8436c3617cd94e1ba97828fbb1ce27c129f66c78fb855b4bb47e122b5f345fba"
-            ],
-            "index": "pypi",
-            "version": "==1.0.0"
         },
         "markupsafe": {
             "hashes": [
@@ -493,13 +500,7 @@
                 "bcrypt"
             ],
             "git": "https://github.com/AlbertUnruh/passlib.git",
-            "hashes": [
-                "sha256:aa6bca462b8d8bda89c70b382f0c298a20b5560af6cbfa2dce410c0a2fb669f1",
-                "sha256:defd50f72b65c5402ab2c573830a6978e5f202ad0d984793c8dde2c4152ebe04"
-            ],
-            "index": "pypi",
-            "ref": "9a00e2d749e995eb2b4592e5c14c1f91dd7f1932",
-            "version": "==1.7.4"
+            "ref": "9a00e2d749e995eb2b4592e5c14c1f91dd7f1932"
         },
         "pillow": {
             "hashes": [
@@ -725,7 +726,6 @@
                 "sha256:a8df96034aae6d2d50a4ebe8216326c61c3eb64836776504fcca410e5937a3ba",
                 "sha256:f5971a9226b701070a4bf2c38c89e5a3f0d64de8debda981d1db98583009122a"
             ],
-            "index": "pypi",
             "markers": "python_version >= '3.8'",
             "version": "==1.0.0"
         },
@@ -792,14 +792,6 @@
             ],
             "index": "pypi",
             "version": "==6.0.1"
-        },
-        "redis": {
-            "hashes": [
-                "sha256:0dab495cd5753069d3bc650a0dde8a8f9edde16fc5691b689a566eda58100d0f",
-                "sha256:ed4802971884ae19d640775ba3b03aa2e7bd5e8fb8dfaed2decce4d0fc48391f"
-            ],
-            "index": "pypi",
-            "version": "==5.0.1"
         },
         "reportlab": {
             "hashes": [

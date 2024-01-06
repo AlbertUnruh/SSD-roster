@@ -5,8 +5,14 @@ from pydantic import EmailStr, PastDate
 from typing import Annotated
 
 # fastapi
-from fastapi import APIRouter, Form
+from fastapi import APIRouter, Form, Request
 from fastapi.responses import HTMLResponse
+
+# local
+from SSD_Roster.src.templates import templates
+
+
+# from SSD_Roster.src.email import send_verification_email
 
 
 router = APIRouter(
@@ -20,8 +26,8 @@ router = APIRouter(
     summary="Displayed page to register",
     response_class=HTMLResponse,
 )
-async def register():
-    return "press somewhere to register..."
+async def register(request: Request):
+    return templates.TemplateResponse(request, "register.html")
 
 
 @router.post(
@@ -33,4 +39,5 @@ async def manage_registration(
     email: Annotated[EmailStr, Form()],
     birthday: Annotated[PastDate, Form()],
 ):
+    #  await send_registration_email()
     return f"/!\\ {username}:{email}:{birthday} /!\\"

@@ -382,7 +382,7 @@ class UserModel(DBBaseModel):
     user_id: Column | UserID = Column(Integer, primary_key=True, unique=True, autoincrement=True, nullable=False)
     username: Column | str = Column(Text, unique=True, nullable=False)
     displayed_name: Column | str = Column(Text, nullable=False)
-    email: Column | EmailStr = Column(Text, nullable=False)
+    email: Column | EmailStr = Column(Text, unique=True, nullable=False)
     email_verified: Column | bool = Column(Boolean, nullable=False)
     user_verified: Column | bool = Column(Boolean, nullable=False)
     birthday: Column | PastDate = Column(Date, nullable=False)
@@ -559,3 +559,11 @@ class ScopeModel(DBBaseModel):
 
     scope: Column | str = Column(Text, primary_key=True, unique=True, nullable=False)
     group_: Column | str = Column(Text, nullable=False)
+
+
+class VerificationCodesModel(DBBaseModel):
+    __tablename__ = "verification_code"
+
+    user_id: Column | int = Column(Integer, primary_key=True, unique=True, autoincrement=False, nullable=False)
+    email: Column | str = Column(Text, nullable=False)
+    code: Column | str = Column(Text, nullable=False)

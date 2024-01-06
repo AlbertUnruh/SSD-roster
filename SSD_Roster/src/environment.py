@@ -13,7 +13,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 # typing
 from pydantic import BaseModel, SecretStr
 from pydantic.networks import AnyUrl, EmailStr, UrlConstraints
-from typing import Annotated, Literal
+from typing import Annotated, Literal, Optional
 
 
 class Database(BaseModel):
@@ -28,6 +28,17 @@ class Token(BaseModel):
     LIFETIME: int  # in hours
     SECRET_KEY: SecretStr  # openssl rand -hex 32
     ALGORITHM: str
+
+
+class Mail(BaseModel):
+    USERNAME: str
+    PASSWORD: SecretStr
+    FROM: EmailStr
+    FROM_NAME: Optional[str]
+    PORT: int
+    SERVER: str
+    STARTTLS: bool
+    SSL_TLS: bool
 
 
 class Settings(BaseSettings):
@@ -47,6 +58,7 @@ class Settings(BaseSettings):
     ALLOW_DEMO_USERS_IN_DEVELOPMENT: bool
     DATABASE: Database
     TOKEN: Token
+    MAIL: Mail
 
     OVERRIDE_422_WITH_400: bool = True
 

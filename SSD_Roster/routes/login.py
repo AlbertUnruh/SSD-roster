@@ -1,15 +1,22 @@
 from __future__ import annotations
 
+# standard library
+from datetime import datetime, timezone
+
+# third party
+import jwt
+
 # typing
+from pydantic import SecretStr
 from typing import Annotated
 
 # fastapi
-from fastapi import APIRouter, Depends, HTTPException
-from fastapi.responses import HTMLResponse
-from fastapi.security import OAuth2PasswordRequestForm
+from fastapi import APIRouter, Form, HTTPException, Request
+from fastapi.responses import HTMLResponse, RedirectResponse, Response
 
 # local
 from SSD_Roster.src.oauth2 import authenticate_user, create_access_token
+from SSD_Roster.src.templates import templates
 
 
 router = APIRouter(
@@ -23,19 +30,32 @@ router = APIRouter(
     summary="Displayed page to login",
     response_class=HTMLResponse,
 )
-async def login():
-    return "press somewhere to log in..."
+async def login(request: Request):
+    return templates.TemplateResponse(request, "login.html")
 
 
 @router.post(
     "/",
     summary="Login-manager",
+    response_class=RedirectResponse,
 )
-async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
-    user = await authenticate_user(form_data.username, form_data.password)
+async def manage_login(
+    username: Annotated[str, Form()],
+    password: Annotated[SecretStr, Form()],
+    request: Request,
+    response: Response,
+):
+    user = await authenticate_user(username, password)
     if user is False:
         raise HTTPException(status_code=400, detail="Incorrect username or password")
 
-    access_token = create_access_token(sub=user.user_id)
+    access_token = create_access_token(sub=user.user_id, scopes=user.scopes)
+    exp = jwt.decode(access_token, options={"verify_signature": False}).get("exp")
+    response.set_cookie(
+        "token",
+        access_token,
+        expires=datetime.fromtimestamp(exp).replace(tzinfo=timezone.utc),
+    )
 
-    return {"access_token": access_token, "token_type": "bearer"}
+    response.status_code = 302
+    return request.app.url_path_for("root")
