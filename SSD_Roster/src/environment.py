@@ -24,6 +24,12 @@ class Database(BaseModel):
     OWNER_EMAIL: EmailStr
 
 
+class Token(BaseModel):
+    LIFETIME: int  # in hours
+    SECRET_KEY: SecretStr  # openssl rand -hex 32
+    ALGORITHM: str
+
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         case_sensitive=True,
@@ -39,6 +45,7 @@ class Settings(BaseSettings):
     PORT: int
     ENVIRONMENT: Literal["production", "development"]
     DATABASE: Database
+    TOKEN: Token
 
     OVERRIDE_422_WITH_400: bool = True
 

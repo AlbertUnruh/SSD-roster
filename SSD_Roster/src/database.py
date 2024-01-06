@@ -17,7 +17,6 @@ from sqlalchemy import create_engine
 from .abc import DBBaseModel
 from .environment import settings
 from .models import GroupedScope, UserModel
-from .oauth2 import get_password_hash
 
 
 database = databases.Database(url := settings.DATABASE.URL.unicode_string())
@@ -25,6 +24,9 @@ engine = create_engine(url, connect_args={"check_same_thread": False})
 
 
 async def setup() -> bool:
+    # local
+    from .oauth2 import get_password_hash  # circular import
+
     DBBaseModel.metadata.create_all(engine)
 
     # should an owner be created?

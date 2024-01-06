@@ -17,6 +17,7 @@ orjson = "~=3.9.10"
 passlib = { git = "https://github.com/AlbertUnruh/passlib.git", extras = ["bcrypt"] }
 pydantic = { version = "~=2.5.3", extras = ["email"] }
 pydantic-settings = "~=2.1.0"
+pyjwt = "~=2.8.0"
 python-multipart = "~=0.0.6"
 pyyaml = "~=6.0.1"
 redis = "~=5.0.1"

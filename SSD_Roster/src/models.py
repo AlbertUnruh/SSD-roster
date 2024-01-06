@@ -344,7 +344,7 @@ class TimetableSchema(BaseModel):
 
 
 class TokenSchema(BaseModel):
-    user_id: Optional[UserID]
+    user_id: UserID
     scopes: list[Scope]
 
 
@@ -357,6 +357,7 @@ class UserSchema(BaseModel):
     user_verified: bool  # then an admin has to verify you
     birthday: PastDate
     password: Optional[SecretStr]  # password will be set once email is verified
+    scopes: str
 
     def to_model(self) -> UserModel:
         user_model = UserModel()
@@ -368,6 +369,7 @@ class UserSchema(BaseModel):
         user_model.user_verified = self.user_verified
         user_model.birthday = self.birthday
         user_model.password = self.password
+        user_model.scopes = self.scopes
         return user_model
 
 
@@ -387,7 +389,8 @@ class UserModel(DBBaseModel):
     password: Column | Optional[SecretStr] = Column(Text, nullable=True)
     scopes: Column | str = Column(Text, nullable=False)
 
-    def to_schema(self) -> UserSchema:
+    @staticmethod  # SQLAlchemy tries to find a column...
+    def to_schema(self: UserModel) -> UserSchema:
         return UserSchema(
             user_id=self.user_id,
             username=self.username,
@@ -397,6 +400,7 @@ class UserModel(DBBaseModel):
             user_verified=self.user_verified,
             birthday=self.birthday,
             password=self.password,
+            scopes=self.scopes,
         )
 
 
@@ -468,7 +472,8 @@ class RosterModel(DBBaseModel):
     fr_bp2: Column | Optional[UserID] = Column(Integer, nullable=True)
     fr_bp3: Column | Optional[UserID] = Column(Integer, nullable=True)
 
-    def to_schema(self) -> RosterSchema:
+    @staticmethod  # SQLAlchemy tries to find a column...
+    def to_schema(self: RosterModel) -> RosterSchema:
         return RosterSchema(
             user_matrix=[
                 [
@@ -534,7 +539,8 @@ class TimetableModel(DBBaseModel):
     fr_s3: Column | Availability = Column(Integer, nullable=False)
     fr_b: Column | Availability = Column(Integer, nullable=False)
 
-    def to_schema(self) -> TimetableSchema:
+    @staticmethod  # SQLAlchemy tries to find a column...
+    def to_schema(self: TimetableModel) -> TimetableSchema:
         return TimetableSchema(
             availability_matrix=[
                 [self.mo_s1, self.mo_s2, self.mo_s3, self.mo_b],

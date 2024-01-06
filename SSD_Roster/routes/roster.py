@@ -3,12 +3,16 @@ from __future__ import annotations
 # standard library
 from datetime import datetime
 
+# typing
+from typing import Annotated
+
 # fastapi
-from fastapi import APIRouter
+from fastapi import APIRouter, Security
 from fastapi.responses import HTMLResponse, RedirectResponse, Response
 
 # local
-from SSD_Roster.src.models import Week, Year
+from SSD_Roster.src.models import Scope, UserSchema, Week, Year
+from SSD_Roster.src.oauth2 import get_current_user
 
 
 router = APIRouter(
@@ -50,6 +54,7 @@ async def roster_pdf():
 async def see_roster(
     year: Year,
     week: Week,
+    user: Annotated[UserSchema, Security(get_current_user, scopes=[Scope.SEE_ROSTER])],
 ):
     return f"roster from week {week} from {year}"
 
@@ -66,6 +71,7 @@ async def see_roster(
 async def download_roster(
     year: Year,
     week: Week,
+    user: Annotated[UserSchema, Security(get_current_user, scopes=[Scope.DOWNLOAD_ROSTER])],
 ):
     return Response(
         b"",
