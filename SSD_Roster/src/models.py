@@ -12,6 +12,7 @@ __all__ = (
     "Weekday",
     "Scope",
     "GroupedScope",
+    "MessageCategory",
     # schemas
     "RosterSchema",
     "TimetableSchema",
@@ -170,6 +171,13 @@ class GroupedScope:  # I know, officially not an Enum...
         for key, value in grouped_scopes.items():
             lower_scopes.extend(value)
             setattr(cls, key, GroupedScopeStr(key, " ".join(lower_scopes), getattr(cls, key).__doc__))
+
+
+class MessageCategory(StrEnum, settings=Unique):
+    PRIMARY = "primary"
+    SUCCESS = "success"
+    DANGER = "danger"
+    ERROR = "error"
 
 
 # ---------- SCHEMAS ---------- #

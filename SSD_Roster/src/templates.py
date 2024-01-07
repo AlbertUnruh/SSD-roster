@@ -9,6 +9,9 @@ from fastapi.templating import Jinja2Templates
 from jinja2.environment import Environment
 from jinja2.loaders import FileSystemLoader
 
+# local
+from .messages import get_flashed_messages
+
 
 # public instance of Jinja2Templates
 templates = Jinja2Templates(
@@ -18,3 +21,5 @@ templates = Jinja2Templates(
         # enable_async=True,  # will raise "RuntimeError: this event loop is already running." when templates are used
     )
 )
+
+templates.env.globals["get_flashed_messages"] = get_flashed_messages

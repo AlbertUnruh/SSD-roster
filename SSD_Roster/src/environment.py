@@ -55,6 +55,7 @@ class Settings(BaseSettings):
     HOST: str
     PORT: int
     ENVIRONMENT: Literal["production", "development"]
+    SECRET_KEY: SecretStr  # openssl rand -hex 32
     ALLOW_DEMO_USERS_IN_DEVELOPMENT: bool
     DATABASE: Database
     TOKEN: Token

@@ -15,6 +15,8 @@ from fastapi import APIRouter, Form, Request
 from fastapi.responses import HTMLResponse, RedirectResponse, Response
 
 # local
+from SSD_Roster.src.messages import flash
+from SSD_Roster.src.models import MessageCategory
 from SSD_Roster.src.oauth2 import authenticate_user, create_access_token
 from SSD_Roster.src.templates import templates
 
@@ -48,6 +50,7 @@ async def manage_login(
     user = await authenticate_user(username, password)
     if user is False:
         # raise HTTPException(status_code=400, detail="Incorrect username or password")
+        flash(request, "Incorrect username or password!", MessageCategory.ERROR)
         response.status_code = 302
         return request.app.url_path_for("login")
 
@@ -57,7 +60,9 @@ async def manage_login(
         "token",
         access_token,
         expires=datetime.fromtimestamp(exp).replace(tzinfo=timezone.utc),
+        httponly=True,
     )
 
+    flash(request, f"Hello {user.displayed_name}, your login was successful", MessageCategory.SUCCESS)
     response.status_code = 302
     return request.app.url_path_for("root")

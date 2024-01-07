@@ -8,10 +8,18 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon/favicon-16x16.png">
     <link rel="icon" type="image/x-icon" href="/static/favicon/favicon.ico">
     <link rel="manifest" href="/static/favicon/site.webmanifest">
+    <link rel="stylesheet" href="/static/style.css">
+    {% block head %}{% endblock %}
 </head>
 <body>
-{% block body %}
-Well, you shouldn't see this message here...
-{% endblock %}
+{# start flashed messages #}
+{% for message in get_flashed_messages(request) %}
+<div class="{{ message.ctg }}">
+    <span id="close" onclick="this.parentNode.remove(); return false;">x</span>
+    {{ message.msg }}
+</div>
+{% endfor %}
+{# end flashed messages #}
+{% block body %}{% endblock %}
 </body>
 </html>

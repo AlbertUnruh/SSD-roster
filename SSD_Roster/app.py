@@ -8,6 +8,8 @@ from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException as StarletteHTTPException
+from starlette.middleware import Middleware
+from starlette.middleware.sessions import SessionMiddleware
 
 # local
 from SSD_Roster import __version__
@@ -36,6 +38,7 @@ app = FastAPI(
     version=__version__,
     docs_url=None,
     redoc_url=None,
+    middleware=[Middleware(SessionMiddleware, secret_key=settings.SECRET_KEY.get_secret_value())],
     lifespan=lifespan,
 )
 

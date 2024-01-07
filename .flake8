@@ -81,7 +81,7 @@ extend-ignore =
 
 exclude = .git,__pycache__,vendor/*
 max-line-length = 120
-known-modules = :[vendor,SSD_Roster,aenum,annotated_types,cryptography,databases,fastapi,fastapi_mail,jwt,orjson,passlib,pydantic,pydantic_settings,python_multipart,pyyaml,redis,reportlab,sqlalchemy,uvicorn,jinja2,starlette]
+known-modules = :[vendor,SSD_Roster,aenum,annotated_types,cryptography,databases,fastapi,fastapi_mail,itsdangerous,jwt,orjson,passlib,pydantic,pydantic_settings,python_multipart,pyyaml,redis,reportlab,sqlalchemy,uvicorn,jinja2,starlette]
 per-file-ignores =
     SSD_Roster/routes/*.py:ANN201,DAL000
     SSD_Roster/app.py:ANN201,DAL000

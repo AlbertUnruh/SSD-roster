@@ -14,6 +14,8 @@ cryptography = "~=41.0.7"
 databases = { version = "~=0.8.0", extras = ["aiosqlite"] }
 fastapi = "~=0.108.0"
 fastapi-mail = "~=1.4.1"
+itsdangerous = "~=2.1.2"
+jinja2 = "~=3.1.2"
 orjson = "~=3.9.10"
 passlib = { git = "https://github.com/AlbertUnruh/passlib.git", extras = ["bcrypt"] }
 pydantic = { version = "~=2.5.3", extras = ["email"] }
@@ -24,7 +26,6 @@ pyyaml = "~=6.0.1"
 reportlab = "~=4.0.8"
 sqlalchemy = "*"  # databases==0.8.0 requires following version: sqlalchemy>=1.4.42,<1.5 --> can't use latest version :(
 uvicorn = { version = "~=0.25.0", extras = ["standard"] }
-jinja2 = "~=3.1.2"
 
 [dev-packages]
 black = "~=23.12.1"
