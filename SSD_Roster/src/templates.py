@@ -4,6 +4,9 @@ from __future__ import annotations
 __all__ = ("templates",)
 
 
+# standard library
+from pathlib import Path
+
 # fastapi
 from fastapi.templating import Jinja2Templates
 from jinja2.environment import Environment
@@ -21,5 +24,9 @@ templates = Jinja2Templates(
         # enable_async=True,  # will raise "RuntimeError: this event loop is already running." when templates are used
     )
 )
+
+ssd_roster_init = Path(__file__).parents[1].joinpath("__init__.py").read_text()
+exec(ssd_roster_init, templates.env.globals)  # noqa S102
+templates.env.globals.pop("__builtins__")
 
 templates.env.globals["get_flashed_messages"] = get_flashed_messages

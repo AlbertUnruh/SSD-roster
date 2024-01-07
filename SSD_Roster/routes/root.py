@@ -14,6 +14,8 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.security import OAuth2PasswordRequestForm
 
 # local
+from SSD_Roster.src.messages import flash
+from SSD_Roster.src.models import MessageCategory
 from SSD_Roster.src.oauth2 import authenticate_user, create_access_token
 from SSD_Roster.src.templates import templates
 
@@ -27,8 +29,9 @@ router = APIRouter()
     response_class=HTMLResponse,
 )
 async def root(request: Request):
-    # return "[CURRENT ROSTER]\n[LOGIN]"
-    return templates.TemplateResponse(request, "base.html")  # ToDo: remove this line as it's just for testing
+    for category in MessageCategory:  # type: ignore
+        flash(request, f"A demo message with category {category}", category)
+    return templates.TemplateResponse(request, "root.html")
 
 
 def setup(app: FastAPI):
