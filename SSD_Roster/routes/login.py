@@ -11,7 +11,7 @@ from pydantic import SecretStr
 from typing import Annotated
 
 # fastapi
-from fastapi import APIRouter, Form, HTTPException, Request
+from fastapi import APIRouter, Form, Request
 from fastapi.responses import HTMLResponse, RedirectResponse, Response
 
 # local
@@ -40,14 +40,16 @@ async def login(request: Request):
     response_class=RedirectResponse,
 )
 async def manage_login(
-    username: Annotated[str, Form()],
-    password: Annotated[SecretStr, Form()],
     request: Request,
     response: Response,
+    username: Annotated[str, Form()] = "",
+    password: Annotated[SecretStr, Form()] = "",
 ):
     user = await authenticate_user(username, password)
     if user is False:
-        raise HTTPException(status_code=400, detail="Incorrect username or password")
+        # raise HTTPException(status_code=400, detail="Incorrect username or password")
+        response.status_code = 302
+        return request.app.url_path_for("login")
 
     access_token = create_access_token(sub=user.user_id, scopes=user.scopes)
     exp = jwt.decode(access_token, options={"verify_signature": False}).get("exp")

@@ -6,7 +6,7 @@ from typing import Annotated
 
 # fastapi
 from fastapi import APIRouter, Form, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, Response
 
 # local
 from SSD_Roster.src.templates import templates
@@ -33,11 +33,18 @@ async def register(request: Request):
 @router.post(
     "/",
     summary="Registration-manager",
+    response_class=RedirectResponse,
 )
 async def manage_registration(
-    username: Annotated[str, Form()],
-    email: Annotated[EmailStr, Form()],
-    birthday: Annotated[PastDate, Form()],
+    request: Request,
+    response: Response,
+    username: Annotated[str, Form()] = None,
+    email: Annotated[EmailStr, Form()] = None,
+    birthday: Annotated[PastDate, Form()] = None,
 ):
+    if any((username is None, email is None, birthday is None)):
+        response.status_code = 302
+        return request.app.url_path_for("register")
+
     #  await send_registration_email()
-    return f"/!\\ {username}:{email}:{birthday} /!\\"
+    return HTMLResponse(f"/!\\ {username}:{email}:{birthday} /!\\")
