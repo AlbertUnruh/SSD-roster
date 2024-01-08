@@ -18,7 +18,12 @@
                 <ul class="navigation__list navigation__list--inline">
                     <li class="navigation__item"><a class="navigation__link" href="{{ url_for('root') }}">Home</a></li>
                     <li class="navigation__item"><a class="navigation__link" href="{{ url_for('roster') }}">Roster</a></li>
+                    {% if not "token" in request.cookies %}
                     <li class="navigation__item"><a class="navigation__link" href="{{ url_for('login') }}">Login</a></li>
+                    {% else %}
+                    <li class="navigation__item"><a class="navigation__link" href="{# url_for('current_user') #}#">Profile (coming soon™)</a></li>
+                    <li class="navigation__item"><a class="navigation__link" href="{{ url_for('logout') }}">Logout</a></li>
+                    {% endif %}
                 </ul>
             </nav>
         </div>
