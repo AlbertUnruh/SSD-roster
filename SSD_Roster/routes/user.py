@@ -1,11 +1,15 @@
 from __future__ import annotations
 
+# typing
+from typing import Annotated
+
 # fastapi
-from fastapi import APIRouter
-from fastapi.responses import HTMLResponse
+from fastapi import APIRouter, Depends, Request
+from fastapi.responses import HTMLResponse, RedirectResponse
 
 # local
-from SSD_Roster.src.models import UserID
+from SSD_Roster.src.models import UserID, UserSchema
+from SSD_Roster.src.oauth2 import get_current_user
 
 
 router = APIRouter(
@@ -21,6 +25,20 @@ router = APIRouter(
 )
 async def users():
     return "ToDo: a list containing every user with their respective access level"
+
+
+@router.get(
+    "/me/",
+    summary="Redirects to the current user",
+    response_class=RedirectResponse,
+)
+async def current_user(
+    request: Request,
+    user: Annotated[UserSchema | None, Depends(get_current_user)],
+):
+    if user is not None:
+        return request.app.url_path_for("see_user", user_id=user.user_id)
+    return request.app.url_path_for("login")
 
 
 @router.get(

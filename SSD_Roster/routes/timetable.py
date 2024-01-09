@@ -29,7 +29,7 @@ async def overview():
     responses={404: {"description": "Not Found"}},
     response_class=HTMLResponse,
 )
-async def see_user(
+async def see_users_timetable(
     user_id: UserID,
     page: PageID = 0,
 ):
