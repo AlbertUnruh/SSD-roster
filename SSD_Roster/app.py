@@ -13,7 +13,7 @@ from starlette.middleware.sessions import SessionMiddleware
 
 # local
 from SSD_Roster import __version__
-from SSD_Roster.routes import login, logout, register, root, roster, timetable, user
+from SSD_Roster.routes import login, logout, register, root, roster, timetable, user, verify
 from SSD_Roster.src.database import database
 from SSD_Roster.src.database import setup as db_setup
 from SSD_Roster.src.environment import settings
@@ -56,6 +56,7 @@ app.include_router(root.router)
 app.include_router(roster.router)
 app.include_router(timetable.router)
 app.include_router(user.router)
+app.include_router(verify.router)
 
 
 if __name__ == "__main__":

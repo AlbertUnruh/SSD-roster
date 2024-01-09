@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block body %}
+<h1>
+    Verification
+</h1>
+<form action="{{ url_for('manage_verification') }}" method="post">
+    <p>Email: <input type="email" name="email" value="{{ email }}"></p>
+    <p>Code: <input type="text" name="code" value="{{ code }}"></p>
+    <p>Password: <input type="password" name="password" placeholder="Set a password"></p>
+    <p><input type="submit" value="Verify"></p>
+</form>
+{% endblock %}

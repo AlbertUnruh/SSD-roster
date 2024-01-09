@@ -9,6 +9,7 @@ from fastapi import APIRouter, Form, Request
 from fastapi.responses import HTMLResponse, RedirectResponse, Response
 
 # local
+from SSD_Roster.src.messages import flash
 from SSD_Roster.src.templates import templates
 
 
@@ -47,4 +48,7 @@ async def manage_registration(
         return request.app.url_path_for("register")
 
     #  await send_registration_email()
-    return HTMLResponse(f"/!\\ {username}:{email}:{birthday} /!\\")
+    flash(request, f"A code has been sent to {email}. Either enter it here or use the link in the mail.")
+
+    response.status_code = 302
+    return request.app.url_path_for("verify") + f"?email={email}"
