@@ -8,3 +8,7 @@
   font-style: normal;
   font-display: swap;
 }
+
+* {
+    font-family: 'DIN 1451 fette Breitschrift 1936';
+}
