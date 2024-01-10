@@ -24,10 +24,12 @@ __all__ = (
     "TimetableModel",
 )
 
+# standard library
+from datetime import datetime
 
 # third party
 from aenum import IntEnum, StrEnum, Unique
-from sqlalchemy import Boolean, Column, Date, Integer, Text
+from sqlalchemy import Boolean, Column, Date, DateTime, Integer, Text
 
 # typing
 import annotated_types
@@ -207,7 +209,7 @@ class RosterSchema(BaseModel):
         [[None, None, None], [None, None, None], [None, None, None], [None, None, None]],
         [[None, None, None], [None, None, None], [None, None, None], [None, None, None]],
     ]
-    """Will generate a matrix with following dimensions: 5[days]*4[slots]*(0-3)[users]"""
+    """Will generate a matrix with following dimensions: 5[days]*4[shifts]*(0-3)[users]"""
     # A slightly more detailed way to represent the matrix
     # Slot/Day   |Monday     |Tuesday    |Wednesday  |Thursday   |Friday
     # -----------+-----------+-----------+-----------+-----------+-----------
@@ -228,11 +230,15 @@ class RosterSchema(BaseModel):
     #            |User #3    |User #3    |User #3    |User #3    |User #3
 
     date_anchor: tuple[Year, Week]
+    published_by: UserID
+    published_at: datetime
 
     def to_schema(self) -> RosterSchema:
         roster_schema = RosterSchema()
         roster_schema.year = self.date_anchor[0]
         roster_schema.week = self.date_anchor[1]
+        roster_schema.published_by = self.published_by
+        roster_schema.published_at = self.published_at
         roster_schema.mo_s1p1 = self.user_matrix[0][0][0]
         roster_schema.mo_s1p2 = self.user_matrix[0][0][1]
         roster_schema.mo_s1p3 = self.user_matrix[0][0][2]
@@ -419,6 +425,8 @@ class RosterModel(DBBaseModel):
     year: Column | Year = Column(Integer, nullable=False)
     week: Column | Week = Column(Integer, nullable=False)
     published: Column | bool = Column(Boolean, nullable=False)
+    published_by: Column | UserID = Column(Integer, nullable=False)
+    published_at: Column | datetime = Column(DateTime, nullable=False)
     mo_s1p1: Column | Optional[UserID] = Column(Integer, nullable=True)
     mo_s1p2: Column | Optional[UserID] = Column(Integer, nullable=True)
     mo_s1p3: Column | Optional[UserID] = Column(Integer, nullable=True)
@@ -516,6 +524,8 @@ class RosterModel(DBBaseModel):
                 ],
             ],
             date_anchor=(self.year, self.week),
+            published_by=self.published_by,
+            published_at=self.published_at,
         )
 
 

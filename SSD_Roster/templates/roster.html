@@ -28,6 +28,7 @@ th {
 <h1>
     Roster {{ year }}/{{ week }}
 </h1>
+{% if published_at and published_by %}
 <p>
     {{ published.strftime("%d/%m/%Y, %H:%M:%S") }} GMT<br>
     by <a href="{{ user_url }}">{{ user }}</a>
@@ -38,6 +39,9 @@ th {
     <span class="danger">Login required! Click <a href="{{ url_for('login') }}">here</a> to log in.</span>
     {% endif %}
 </p>
+{% else %}
+<p class="danger">Here's nothing to see as nothing got published here!</p>
+{% endif %}
 <table style="width: 100%;">
     <tbody>
         <tr>
@@ -45,46 +49,43 @@ th {
         </tr>
         <tr>
             <td class="shift_time" rowspan="3">1./2.</td>
-            <td class="shift">SSD1</td><td class="shift">SSD1</td><td class="shift">SSD1</td><td class="shift">SSD1</td><td class="shift">SSD1</td>
+            <td class="shift">{{ matrix.0.0.0 }}</td><td class="shift">{{ matrix.1.0.0 }}</td><td class="shift">{{ matrix.2.0.0 }}</td><td class="shift">{{ matrix.3.0.0 }}</td><td class="shift">{{ matrix.4.0.0 }}</td>
         </tr>
         <tr>
-            <td class="shift">SSD2</td><td class="shift">SSD2</td><td class="shift">SSD2</td><td class="shift">SSD2</td><td class="shift">SSD2</td>
+            <td class="shift">{{ matrix.0.0.1 }}</td><td class="shift">{{ matrix.1.0.1 }}</td><td class="shift">{{ matrix.2.0.1 }}</td><td class="shift">{{ matrix.3.0.1 }}</td><td class="shift">{{ matrix.4.0.1 }}</td>
         </tr>
         <tr class="last_shift">
-            <td class="shift">SSD3</td><td class="shift">SSD3</td><td class="shift">SSD3</td><td class="shift">SSD3</td><td class="shift">SSD3</td>
+            <td class="shift">{{ matrix.0.0.2 }}</td><td class="shift">{{ matrix.1.0.2 }}</td><td class="shift">{{ matrix.2.0.2 }}</td><td class="shift">{{ matrix.3.0.2 }}</td><td class="shift">{{ matrix.4.0.2 }}</td>
         </tr>
         <tr>
             <td class="shift_time" rowspan="3">3./4.</td>
-            <td class="shift">SSD1</td><td class="shift">SSD1</td><td class="shift">SSD1</td><td class="shift">SSD1</td><td class="shift">SSD1</td>
+            <td class="shift">{{ matrix.0.1.0 }}</td><td class="shift">{{ matrix.1.1.0 }}</td><td class="shift">{{ matrix.2.1.0 }}</td><td class="shift">{{ matrix.3.1.0 }}</td><td class="shift">{{ matrix.4.1.0 }}</td>
         </tr>
         <tr>
-            <td class="shift">SSD2</td><td class="shift">SSD2</td><td class="shift">SSD2</td><td class="shift">SSD2</td><td class="shift">SSD2</td>
+            <td class="shift">{{ matrix.0.1.1 }}</td><td class="shift">{{ matrix.1.1.1 }}</td><td class="shift">{{ matrix.2.1.1 }}</td><td class="shift">{{ matrix.3.1.1 }}</td><td class="shift">{{ matrix.4.1.1 }}</td>
         </tr>
         <tr class="last_shift">
-            <td class="shift">SSD3</td><td class="shift">SSD3</td><td class="shift">SSD3</td><td class="shift">SSD3</td><td class="shift">SSD3</td>
+            <td class="shift">{{ matrix.0.1.2 }}</td><td class="shift">{{ matrix.1.1.2 }}</td><td class="shift">{{ matrix.2.1.2 }}</td><td class="shift">{{ matrix.3.1.2 }}</td><td class="shift">{{ matrix.4.1.2 }}</td>
         </tr>
         <tr>
             <td class="shift_time" rowspan="3">5./6.</td>
-            <td class="shift">SSD1</td><td class="shift">SSD1</td><td class="shift">SSD1</td><td class="shift">SSD1</td><td class="shift">SSD1</td>
+            <td class="shift">{{ matrix.0.2.0 }}</td><td class="shift">{{ matrix.1.2.0 }}</td><td class="shift">{{ matrix.2.2.0 }}</td><td class="shift">{{ matrix.3.2.0 }}</td><td class="shift">{{ matrix.4.2.0 }}</td>
         </tr>
         <tr>
-            <td class="shift">SSD2</td><td class="shift">SSD2</td><td class="shift">SSD2</td><td class="shift">SSD2</td><td class="shift">SSD2</td>
+            <td class="shift">{{ matrix.0.2.1 }}</td><td class="shift">{{ matrix.1.2.1 }}</td><td class="shift">{{ matrix.2.2.1 }}</td><td class="shift">{{ matrix.3.2.1 }}</td><td class="shift">{{ matrix.4.2.1 }}</td>
         </tr>
         <tr class="last_shift">
-            <td class="shift">SSD3</td><td class="shift">SSD3</td><td class="shift">SSD3</td><td class="shift">SSD3</td><td class="shift">SSD3</td>
+            <td class="shift">{{ matrix.0.2.2 }}</td><td class="shift">{{ matrix.1.2.2 }}</td><td class="shift">{{ matrix.2.2.2 }}</td><td class="shift">{{ matrix.3.2.2 }}</td><td class="shift">{{ matrix.4.2.2 }}</td>
         </tr>
         <tr>
-            <td class="shift_time" rowspan="4">Pausendienst</td>
-            <td class="shift">SSD4</td><td class="shift">SSD4</td><td class="shift">SSD4</td><td class="shift">SSD4</td><td class="shift">SSD4</td>
+            <td class="shift_time" rowspan="3">Pausendienst</td>
+            <td class="shift">{{ matrix.0.3.0 }}</td><td class="shift">{{ matrix.1.3.0 }}</td><td class="shift">{{ matrix.2.3.0 }}</td><td class="shift">{{ matrix.3.3.0 }}</td><td class="shift">{{ matrix.4.3.0 }}</td>
         </tr>
         <tr>
-            <td class="shift">SSD5</td><td class="shift">SSD5</td><td class="shift">SSD5</td><td class="shift">SSD5</td><td class="shift">SSD5</td>
+            <td class="shift">{{ matrix.0.3.1 }}</td><td class="shift">{{ matrix.1.3.1 }}</td><td class="shift">{{ matrix.2.3.1 }}</td><td class="shift">{{ matrix.3.3.1 }}</td><td class="shift">{{ matrix.4.3.1 }}</td>
         </tr>
         <tr>
-            <td class="shift">SSD6</td><td class="shift">SSD6</td><td class="shift">SSD6</td><td class="shift">SSD6</td><td class="shift">SSD6</td>
-        </tr>
-        <tr>
-            <td class="shift">SSD7</td><td class="shift">SSD7</td><td class="shift">SSD7</td><td class="shift">SSD7</td><td class="shift">SSD7</td>
+            <td class="shift">{{ matrix.0.3.2 }}</td><td class="shift">{{ matrix.1.3.2 }}</td><td class="shift">{{ matrix.2.3.2 }}</td><td class="shift">{{ matrix.3.3.2 }}</td><td class="shift">{{ matrix.4.3.2 }}</td>
         </tr>
     </tbody>
 </table>
