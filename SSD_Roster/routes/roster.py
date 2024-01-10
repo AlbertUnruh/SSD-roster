@@ -7,12 +7,13 @@ from datetime import datetime
 from typing import Annotated
 
 # fastapi
-from fastapi import APIRouter, Security
+from fastapi import APIRouter, Request, Security
 from fastapi.responses import HTMLResponse, RedirectResponse, Response
 
 # local
-from SSD_Roster.src.models import Scope, UserSchema, Week, Year
+from SSD_Roster.src.models import GroupedScope, Scope, UserSchema, Week, Year
 from SSD_Roster.src.oauth2 import get_current_user
+from SSD_Roster.src.templates import templates
 
 
 router = APIRouter(
@@ -39,10 +40,8 @@ async def roster():
     response_class=RedirectResponse,
 )
 async def roster_pdf():
-    date = datetime.utcnow()
-    year = date.year
-    week = date.isocalendar()[1]
-    return router.url_path_for("download_roster", year=year, week=week)
+    iso = datetime.utcnow().isocalendar()
+    return router.url_path_for("download_roster", year=iso.year, week=iso.week)
 
 
 @router.get(
@@ -52,11 +51,25 @@ async def roster_pdf():
     response_class=HTMLResponse,
 )
 async def see_roster(
+    request: Request,
     year: Year,
     week: Week,
     user: Annotated[UserSchema | None, Security(get_current_user, scopes=[Scope.SEE_ROSTER])],
 ):
-    return f"roster from week {week} from {year}"
+    # ToDo: @HTML: add navigation (week before | current week | week after)*
+    #              *with before/after being relative to displayed week
+    return templates.TemplateResponse(
+        request,
+        "roster.html",
+        {
+            "week": week,
+            "year": year,
+            "published": datetime.utcnow(),  # ToDo: replace with date from db
+            "user": user.displayed_name if user is not None else "",  # ToDo: replace with user from db
+            "user_url": "#",
+            "public_download": Scope.DOWNLOAD_ROSTER.value in GroupedScope.PUBLIC,
+        },
+    )
 
 
 @router.get(

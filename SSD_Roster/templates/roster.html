@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block style %}
+table, th, td {
+  border-collapse: collapse;
+}
+table, td {
+  border: 1px solid black;
+}
+th {
+  border-left: 1px solid black;
+  border-bottom: 2px solid red;
+  width: 18%;
+}
+.shift_time {
+  border-left: 1px solid black;
+  border-right: 2px solid red;
+  width: 10%;
+}
+.last_shift {
+  border-bottom: 1px solid black;
+}
+.shift {
+  border: 0px;
+  border-left: 1px solid black;
+}
+{% endblock %}
+{% block body %}
+<h1>
+    Roster {{ year }}/{{ week }}
+</h1>
+<p>
+    {{ published.strftime("%d/%m/%Y, %H:%M:%S") }} GMT<br>
+    by <a href="{{ user_url }}">{{ user }}</a>
+</p>
+<p>
+    Download as PDF <a href="{{ url_for('download_roster', year=year, week=week) }}">here</a>.
+    {% if not "token" in request.cookies and public_download is false %}
+    <span class="danger">Login required! Click <a href="{{ url_for('login') }}">here</a> to log in.</span>
+    {% endif %}
+</p>
+<table style="width: 100%;">
+    <tbody>
+        <tr>
+            <th class="shift_time">Stunde</th><th>Montag</th><th>Dienstag</th><th>Mittwoch</th><th>Donnerstag</th><th>Freitag</th>
+        </tr>
+        <tr>
+            <td class="shift_time" rowspan="3">1./2.</td>
+            <td class="shift">SSD1</td><td class="shift">SSD1</td><td class="shift">SSD1</td><td class="shift">SSD1</td><td class="shift">SSD1</td>
+        </tr>
+        <tr>
+            <td class="shift">SSD2</td><td class="shift">SSD2</td><td class="shift">SSD2</td><td class="shift">SSD2</td><td class="shift">SSD2</td>
+        </tr>
+        <tr class="last_shift">
+            <td class="shift">SSD3</td><td class="shift">SSD3</td><td class="shift">SSD3</td><td class="shift">SSD3</td><td class="shift">SSD3</td>
+        </tr>
+        <tr>
+            <td class="shift_time" rowspan="3">3./4.</td>
+            <td class="shift">SSD1</td><td class="shift">SSD1</td><td class="shift">SSD1</td><td class="shift">SSD1</td><td class="shift">SSD1</td>
+        </tr>
+        <tr>
+            <td class="shift">SSD2</td><td class="shift">SSD2</td><td class="shift">SSD2</td><td class="shift">SSD2</td><td class="shift">SSD2</td>
+        </tr>
+        <tr class="last_shift">
+            <td class="shift">SSD3</td><td class="shift">SSD3</td><td class="shift">SSD3</td><td class="shift">SSD3</td><td class="shift">SSD3</td>
+        </tr>
+        <tr>
+            <td class="shift_time" rowspan="3">5./6.</td>
+            <td class="shift">SSD1</td><td class="shift">SSD1</td><td class="shift">SSD1</td><td class="shift">SSD1</td><td class="shift">SSD1</td>
+        </tr>
+        <tr>
+            <td class="shift">SSD2</td><td class="shift">SSD2</td><td class="shift">SSD2</td><td class="shift">SSD2</td><td class="shift">SSD2</td>
+        </tr>
+        <tr class="last_shift">
+            <td class="shift">SSD3</td><td class="shift">SSD3</td><td class="shift">SSD3</td><td class="shift">SSD3</td><td class="shift">SSD3</td>
+        </tr>
+        <tr>
+            <td class="shift_time" rowspan="4">Pausendienst</td>
+            <td class="shift">SSD4</td><td class="shift">SSD4</td><td class="shift">SSD4</td><td class="shift">SSD4</td><td class="shift">SSD4</td>
+        </tr>
+        <tr>
+            <td class="shift">SSD5</td><td class="shift">SSD5</td><td class="shift">SSD5</td><td class="shift">SSD5</td><td class="shift">SSD5</td>
+        </tr>
+        <tr>
+            <td class="shift">SSD6</td><td class="shift">SSD6</td><td class="shift">SSD6</td><td class="shift">SSD6</td><td class="shift">SSD6</td>
+        </tr>
+        <tr>
+            <td class="shift">SSD7</td><td class="shift">SSD7</td><td class="shift">SSD7</td><td class="shift">SSD7</td><td class="shift">SSD7</td>
+        </tr>
+    </tbody>
+</table>
+{% endblock %}
