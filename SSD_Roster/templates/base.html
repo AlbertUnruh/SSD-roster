@@ -10,6 +10,9 @@
     <link rel="manifest" href="/static/favicon/site.webmanifest">
     <link rel="stylesheet" href="/static/style.css">
     {% block head %}{% endblock %}
+    <style>
+        {% block style %}{% endblock %}
+    </style>
 </head>
 <body>
     <header class="header sticky sticky--top">
@@ -43,7 +46,7 @@
         <p>
             Version: {{ __version__ }}<br>
             <a href="{{ __url__ }}">Source Code</a><br>
-            Author/Contributors: {{ " ".join(__contributors__) }}<br>
+            Author/Contributors: {{ ", ".join(__contributors__) }}<br>
             {{ __copyright__ }}
         </p>
     </footer>
