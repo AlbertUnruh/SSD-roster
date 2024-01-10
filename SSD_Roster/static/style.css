@@ -6,6 +6,31 @@ html {
   box-sizing: border-box;
 }
 
+body {
+  margin: 0;
+}
+
+.main {
+  margin: 1em;
+}
+
+.header, footer {
+  background-color: #d83f51;
+}
+
+footer {
+  margin: 0;
+  padding: 0.5em 1em 0.5em 1em;
+}
+
+.header {
+  padding: 1em 0em 0.5em 0em;
+}
+
+.header_grid {
+  padding: 0em 0em 0.5em 0em;
+}
+
 .primary {
   color: #0066dd;
 }
@@ -39,15 +64,9 @@ html {
   top: 0;
 }
 
-
 .header_grid {
   inline-size: 100%;
   margin-inline: auto;
-}
-
-.header {
-  background-color: #d83f51;
-  padding-block: 1em;
 }
 
 .message {
@@ -73,9 +92,4 @@ html {
   display: block;
   padding-inline: 1em;
   text-decoration: none;
-}
-
-footer {
-  background-color: #d83f51;
-  padding: 0 1em;
 }

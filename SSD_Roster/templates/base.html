@@ -40,16 +40,14 @@
         {% endfor %}
         {# end flashed messages #}
     </header>
-    <main>
+    <main class="main">
         {% block body %}{% endblock %}
     </main>
     <footer class="footer">
-        <p>
-            Version: {{ __version__ }}<br>
-            <a href="{{ __url__ }}">Source Code</a><br>
-            Author/Contributors: {{ ", ".join(__contributors__) }}<br>
-            {{ __copyright__ }}
-        </p>
+        Version: {{ __version__ }}<br>
+        <a href="{{ __url__ }}">Source Code</a><br>
+        Author/Contributors: {{ ", ".join(__contributors__) }}<br>
+        {{ __copyright__ }}
     </footer>
     <script>
         window.onload = function(){
