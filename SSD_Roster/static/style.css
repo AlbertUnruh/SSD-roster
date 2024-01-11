@@ -32,16 +32,16 @@ footer {
 }
 
 .primary {
-  color: #0066dd;
+  color: #02ccfe;
 }
 .success {
-  color: #66ff00;
+  color: #8ffe09;
 }
 .danger {
-  color: #ff0f0f;
+  color: #980001;
 }
 .error {
-  color: #980001;
+  color: #6a0001;
 }
 
 .closeable {
