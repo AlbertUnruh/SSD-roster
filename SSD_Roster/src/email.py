@@ -3,7 +3,7 @@ from __future__ import annotations
 
 __all__ = (
     "send",
-    "send_email_verification",
+    "send_verification_email",
 )
 
 
@@ -28,15 +28,22 @@ fastmail = FastMail(
         MAIL_DEBUG=settings.ENVIRONMENT == "development",
         MAIL_FROM=settings.MAIL.FROM,
         MAIL_FROM_NAME=settings.MAIL.FROM_NAME,
+        SUPPRESS_SEND=settings.MAIL.DISABLED,
     )
 )
 
 
-async def send(message: MessageSchema) -> None:
-    await fastmail.send_message(message)
+async def send(message: MessageSchema, *, silent: bool = True) -> bool:
+    try:
+        await fastmail.send_message(message)
+    except Exception:
+        if not silent:
+            raise
+        return False
+    return not settings.MAIL.DISABLED
 
 
-async def send_email_verification(to: EmailStr, code: str) -> None:
+async def send_verification_email(to: EmailStr, code: str) -> bool:
     return await send(
         MessageSchema(
             subject="Email Verification",

@@ -39,6 +39,7 @@ class Mail(BaseModel):
     SERVER: str
     STARTTLS: bool
     SSL_TLS: bool
+    DISABLED: bool
 
 
 class Settings(BaseSettings):

@@ -22,7 +22,10 @@ __all__ = (
     "UserModel",
     "RosterModel",
     "TimetableModel",
+    "ScopeModel",
+    "VerificationCodesModel",
 )
+
 
 # standard library
 from datetime import datetime
