@@ -15,8 +15,9 @@ from fastapi import APIRouter, Form, Request
 from fastapi.responses import HTMLResponse, RedirectResponse, Response
 
 # local
+from SSD_Roster.src.database import database
 from SSD_Roster.src.messages import flash
-from SSD_Roster.src.models import MessageCategory
+from SSD_Roster.src.models import MessageCategory, UserModel
 from SSD_Roster.src.oauth2 import authenticate_user, create_access_token
 from SSD_Roster.src.templates import templates
 
@@ -49,8 +50,14 @@ async def manage_login(
 ):
     user = await authenticate_user(username, password)
     if user is False:
-        # raise HTTPException(status_code=400, detail="Incorrect username or password")
-        flash(request, "Incorrect username or password!", MessageCategory.ERROR)
+        # add a bit of context for freshly registered users
+        if (_user := await database.fetch_one(UserModel.select().where(UserModel.username == username))) is not None:
+            if _user.email_verified is False:
+                flash(request, "You can't login without your email being verified!", MessageCategory.ERROR)
+            if _user.user_verified is False:
+                flash(request, "You can't login without being verified by an admin!", MessageCategory.ERROR)
+        else:
+            flash(request, "Incorrect username or password!", MessageCategory.ERROR)
         response.status_code = 302
         return request.app.url_path_for("login")
 
