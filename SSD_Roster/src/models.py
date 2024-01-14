@@ -47,7 +47,7 @@ from .abc import DBBaseModel, GroupedScopeStr
 
 
 UserID = Annotated[int, annotated_types.Gt(0)]
-PageID = Annotated[int, annotated_types.Gt(0)]  # for pagination at /timetable/{user_id}?page={N>0}
+PageID = Annotated[int, annotated_types.Ge(0)]  # for pagination at /timetable/{user_id}?page={N>=0}
 
 Year = Annotated[int, annotated_types.Ge(2023), annotated_types.Le(2100)]
 # 2023 is the project's begin and I would be impressed if this project lives until 2100
@@ -316,8 +316,8 @@ class TimetableSchema(BaseModel):
         ],
         annotated_types.MinLen(5),
         annotated_types.MaxLen(5),
-    ] = [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
-    """Will generate a matrix with following dimensions: 5[days]*3[availabilities]"""
+    ] = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+    """Will generate a matrix with following dimensions: 5[days]*4[availabilities]"""
     # A slightly more detailed way to represent the matrix
     # Slot/Day   |Monday     |Tuesday    |Wednesday  |Thursday   |Friday
     # -----------+-----------+-----------+-----------+-----------+-----------
