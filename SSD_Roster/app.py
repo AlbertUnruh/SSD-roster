@@ -13,7 +13,7 @@ from starlette.middleware.sessions import SessionMiddleware
 
 # local
 from SSD_Roster import __version__
-from SSD_Roster.routes import login, logout, logs, register, root, roster, timetable, user, verify
+from SSD_Roster.routes import login, logout, logs, matrix, register, root, roster, timetable, user, verify
 from SSD_Roster.src.database import database
 from SSD_Roster.src.database import setup as db_setup
 from SSD_Roster.src.environment import settings
@@ -55,6 +55,7 @@ app.add_exception_handler(RequestValidationError, validation_exception_handler) 
 app.include_router(login.router)
 app.include_router(logout.router)
 app.include_router(logs.router)
+app.include_router(matrix.router)
 app.include_router(register.router)
 app.include_router(root.router)
 app.include_router(roster.router)
