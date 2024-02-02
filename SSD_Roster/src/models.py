@@ -17,6 +17,7 @@ __all__ = (
     "RosterSchema",
     "TimetableSchema",
     "TokenSchema",
+    "MessageSchema",
     "UserSchema",
     # models
     "UserModel",
@@ -363,6 +364,11 @@ class TimetableSchema(BaseModel):
 class TokenSchema(BaseModel):
     user_id: UserID
     scopes: list[Scope]
+
+
+class MessageSchema(BaseModel):
+    message: str
+    category: MessageCategory = MessageCategory.PRIMARY
 
 
 class UserSchema(BaseModel):

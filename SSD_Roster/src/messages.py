@@ -14,7 +14,7 @@ from typing import TypedDict
 from fastapi import Request
 
 # local
-from .models import MessageCategory
+from .models import MessageCategory, MessageSchema, UserID
 
 
 class _MessageDict(TypedDict):
@@ -41,3 +41,8 @@ def get_flashed_messages(request: Request, category: MessageCategory | str = "*"
 
     request.session["_messages"] = to_keep
     return to_return
+
+
+async def get_messages_for(user_id: UserID) -> list[MessageSchema]:
+    # ToDo: do something with the database... idk
+    return []

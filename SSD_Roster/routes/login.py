@@ -16,7 +16,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse, Response
 
 # local
 from SSD_Roster.src.database import database
-from SSD_Roster.src.messages import flash
+from SSD_Roster.src.messages import flash, get_messages_for
 from SSD_Roster.src.models import MessageCategory, UserModel
 from SSD_Roster.src.oauth2 import authenticate_user, create_access_token
 from SSD_Roster.src.templates import templates
@@ -71,5 +71,7 @@ async def manage_login(
     )
 
     flash(request, f"Hello {user.displayed_name}, your login was successful", MessageCategory.SUCCESS)
+    for message in await get_messages_for(user.user_id):
+        flash(request, message.content, message.category)
     response.status_code = 302
     return request.app.url_path_for("root")
