@@ -100,6 +100,9 @@ class Scope(StrEnum, settings=Unique, init="value __doc__"):
     # backups
     MANAGE_BACKUPS = "backups:manage", "Manage backups."
 
+    # logs
+    SEE_LOGS = "logs:see", "See logs."
+
     @staticmethod
     def to_oauth2_scopes_dict() -> dict[str, str]:
         return {scope.value: scope.__doc__ for scope in Scope}  # type: ignore

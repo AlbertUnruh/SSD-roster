@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block style %}
+.logs {
+  background: #212121;
+}
+.stdout {
+  color: #cdebec;
+}
+.stderr {
+  color: #f60206;
+}
+{% endblock %}
+{% block body %}
+<h1>
+    Logs
+</h1>
+{% if not injected %}
+<h2 class="danger">
+    Logger hasn't been injected!
+</h2>
+{% endif %}
+<div class="logs">
+    {% for log in logs %}
+    <p class="{{ log.source }}">{{ log.message }}</p>
+    {% else %}
+    <p style="color: #11aa00">Nothing logged yet!</p>
+    {% endfor %}
+</div>
+{% endblock %}
