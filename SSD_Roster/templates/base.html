@@ -16,39 +16,11 @@
     </style>
 </head>
 <body>
-    <header class="header sticky sticky--top">
-        <div class="header_grid">
-            <nav class="navigation">
-                <ul class="navigation__list navigation__list--inline">
-                    <li class="navigation__item"><a class="navigation__link" href="{{ url_for('root') }}">Home</a></li>
-                    <li class="navigation__item"><a class="navigation__link" href="{{ url_for('roster') }}">Roster</a></li>
-                    {% if not "token" in request.cookies %}
-                    <li class="navigation__item"><a class="navigation__link" href="{{ url_for('login') }}">Login</a></li>
-                    {% else %}
-                    <li class="navigation__item"><a class="navigation__link" href="{{ url_for('current_user') }}">Profile</a></li>
-                    <li class="navigation__item"><a class="navigation__link" href="{{ url_for('logout') }}">Logout</a></li>
-                    {% endif %}
-                </ul>
-            </nav>
-        </div>
-        {# start flashed messages #}
-        {% for message in get_flashed_messages(request) %}
-        <div class="{{ message.ctg }} message">
-            <span class="closeable">X</span>
-            {{ message.msg }}
-        </div>
-        {% endfor %}
-        {# end flashed messages #}
-    </header>
+    {% include "header.html" %}
     <main class="main">
         {% block body %}{% endblock %}
     </main>
-    <footer class="footer">
-        Version: {{ __version__ }}<br>
-        <a href="{{ __url__ }}">Source Code</a><br>
-        Author/Contributors: {{ ", ".join(__contributors__) }}<br>
-        {{ __copyright__ }}
-    </footer>
+    {% include "footer.html" %}
     <script>
         window.onload = function(){
           Array.from(document.getElementsByClassName('closeable')).forEach(function(v, i, a){

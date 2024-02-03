@@ -76,7 +76,7 @@ async def manage_registration(
     code = generate_code()
     await database.execute(VerificationCodesModel.insert().values(user_id=user_id, email=email, code=code))
 
-    if await send_verification_email(email, code):
+    if await send_verification_email(request, email, code):
         flash(request, f"A code has been sent to {email}. Either enter it here or use the link in the mail.")
     else:
         flash(request, f"No email has been send to {email}! Please contact an admin!", MessageCategory.DANGER)

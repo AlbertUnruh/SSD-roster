@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        {% include "style.css" %}
+    </style>
+</head>
+<body>
+    <header class="header" style="padding: 0.5em 0em 0.5em 1em;">
+        <h1>Email Verification</h1>
+    </header>
+    <main class="main">
+        <p>
+            In order to use the service you need to verify your email address.
+            <br>
+            Furthermore, a verification from an admin is required to ensure that only permitted users register.
+            <br>
+            <i>
+                You don't have to contact an admin yourself, they've been notified about your request.
+            </i>
+        </p>
+        <p>
+            Please use the following code to verify your email address and set a <span class="danger">secure</span> password!
+        </p>
+        <p style="font-size: 1.2em; margin: 1em 0 0 0;">
+            Here is your code: <span style="color: #384893;">{{ code }}</span>
+        </p>
+        <i>
+            Alternatively use this link: <a href="{{ url }}" style="color: #384893;">{{ url }}</a>
+        </i>
+    </main>
+    {% include "footer.html" %}
+</body>
+</html>
