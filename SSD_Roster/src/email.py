@@ -7,10 +7,6 @@ __all__ = (
 )
 
 
-# standard library
-import sys
-import traceback
-
 # third party
 from fastapi_mail import ConnectionConfig, FastMail, MessageSchema, MessageType
 
@@ -23,6 +19,7 @@ from fastapi import Request
 # local
 from .environment import settings
 from .templates import templates
+from .utils import might_raise
 
 
 fastmail = FastMail(
@@ -42,14 +39,8 @@ fastmail = FastMail(
 
 
 async def send(message: MessageSchema, *, silent: bool = True) -> bool:
-    try:
-        await fastmail.send_message(message)
-    except Exception:  # noqa
-        if not silent:
-            raise
-        sys.stderr.write(traceback.format_exc())  # will get logged
-        return False
-    return not settings.MAIL.DISABLED
+    ok, _ = await might_raise(fastmail.send_message(message), silent)
+    return ok and not settings.MAIL.DISABLED
 
 
 async def send_verification_email(request: Request, to: EmailStr, code: str) -> bool:
