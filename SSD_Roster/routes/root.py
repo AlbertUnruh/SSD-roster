@@ -29,7 +29,7 @@ router = APIRouter()
     response_class=HTMLResponse,
 )
 async def root(request: Request):
-    for category in MessageCategory:  # type: ignore
+    for category in MessageCategory:  # type: ignore  # ToDo: remove in demo messages
         flash(request, f"A demo message with category {category}", category)
     return templates.TemplateResponse(request, "root.html")
 

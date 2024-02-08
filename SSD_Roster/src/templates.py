@@ -28,5 +28,6 @@ templates = Jinja2Templates(
 ssd_roster_init = Path(__file__).parents[1].joinpath("__init__.py").read_text()
 exec(ssd_roster_init, templates.env.globals)  # noqa S102
 templates.env.globals.pop("__builtins__")
+# ToDo: maybe append REV/HEAD (or whatever the hash-id is called) to templates.env.globals["__version__"]
 
 templates.env.globals["get_flashed_messages"] = get_flashed_messages

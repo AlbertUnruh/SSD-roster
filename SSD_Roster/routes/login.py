@@ -71,7 +71,10 @@ async def manage_login(
     )
 
     flash(request, f"Hello {user.displayed_name}, your login was successful", MessageCategory.SUCCESS)
-    for message in await get_messages_for(user.user_id):
+    # ToDo: maybe a birthday message if its their birthday?
+    for message in await get_messages_for(
+        user.user_id
+    ):  # ToDo: update when ``get_messages_for`` is actually implemented
         flash(request, message.content, message.category)
     response.status_code = 302
     return request.app.url_path_for("root")

@@ -30,6 +30,7 @@ router = APIRouter(
     response_class=HTMLResponse,
 )
 async def overview():
+    # ToDo: create roster, function to search for other timetables
     return "ToDo: create roster, function to search for other timetables"
 
 
@@ -82,3 +83,6 @@ async def see_users_timetable(
         },
         200 if db_timetable is not None else 404,  # or like this ^^: 200+(db_timetable is None)*204
     )
+
+
+# ToDo: endpoint to create/edit personal timetable

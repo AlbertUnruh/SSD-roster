@@ -124,8 +124,15 @@ async def download_roster(
     week: Week,
     user: Annotated[UserSchema | None, Security(get_current_user, scopes=[Scope.DOWNLOAD_ROSTER])],
 ):
+    # ToDo: actually implement downloading the roster as a PDF
     return Response(
         b"",
         media_type="application/pdf",
         headers={"Content-Disposition": f'attachment; filename="SSD-roster-{year}-{week}.pdf"'},
     )
+
+
+# ToDo: endpoint to create roster
+# ToDo: endpoint to view own (created by one self) rosters
+# ToDo: endpoint to submit an own roster
+# ToDo: endpoint to approve a roster

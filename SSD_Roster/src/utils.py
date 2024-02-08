@@ -17,7 +17,7 @@ T = TypeVar("T")
 
 @overload
 async def might_raise(awaitable: Awaitable[T], silence: bool = True) -> tuple[bool, T | None]:
-    # unspecific with ``bool`` and ``T | None`` type-hinter
+    # unspecific with ``bool`` and ``T | None`` for type-hinter
     ...
 
 

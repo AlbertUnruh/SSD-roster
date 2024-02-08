@@ -60,3 +60,9 @@ async def send_verification_email(request: Request, to: EmailStr, code: str) -> 
             subtype=MessageType.html,
         ),
     )
+
+
+# ToDo: send_inventory_finished_email(...); inventory is finished and admins are notified with a list of items (with
+#                                           respective stock and warnings if applicable)
+# ToDo: send_inventory_expiry_email(...); no user interacted with the inventory, but the system detected an upcoming
+#                                         expiration

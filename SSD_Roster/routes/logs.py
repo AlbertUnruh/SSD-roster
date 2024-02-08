@@ -56,4 +56,5 @@ async def logs(
     request: Request,
     user: Annotated[UserSchema | None, Security(get_current_user, scopes=[Scope.SEE_LOGS])],
 ):
+    # ToDo: make logs able to use "\n" (especially needed for tracebacks as they aren't pretty without linebreaks)
     return templates.TemplateResponse(request, "logs.html", {"logs": _logs, "injected": _injected})

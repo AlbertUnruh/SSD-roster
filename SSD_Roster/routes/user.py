@@ -24,6 +24,7 @@ router = APIRouter(
     response_class=HTMLResponse,
 )
 async def users():
+    # ToDo: a list containing every user with their respective access level
     return "ToDo: a list containing every user with their respective access level"
 
 
@@ -50,4 +51,6 @@ async def current_user(
 async def see_user(
     user_id: UserID,
 ):
+    # ToDo: actually implement it with following information: timetable, age, access level
+    # ToDo: restrict endpoint to logged in users only
     return f"User #{user_id}\n<timetable-link>"

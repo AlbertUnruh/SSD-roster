@@ -19,4 +19,4 @@ class Roster(RosterSchema):
         return date.fromisocalendar(year, week, 1), date.fromisocalendar(year, week, 5)
 
     def export_to_pdf(self):  # noqa ANN201
-        raise NotImplementedError
+        raise NotImplementedError  # ToDo: use src.pdf.create_roster

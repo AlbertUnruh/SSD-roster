@@ -78,3 +78,6 @@ async def manage_verification(
 
     response.status_code = 302
     return request.app.url_path_for("login")
+
+
+# ToDo: endpoint for admins to verify a user

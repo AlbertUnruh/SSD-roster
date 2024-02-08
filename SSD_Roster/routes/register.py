@@ -83,3 +83,7 @@ async def manage_registration(
 
     response.status_code = 302
     return request.app.url_path_for("verify") + f"?email={email}"
+
+
+# ToDo: maybe endpoint for admins to create users (which are user-verified immediately, just email-verification missing
+#       (also to let the user set a password))

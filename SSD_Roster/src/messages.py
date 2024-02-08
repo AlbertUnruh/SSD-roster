@@ -4,6 +4,7 @@ from __future__ import annotations
 __all__ = (
     "flash",
     "get_flashed_messages",
+    "get_messages_for",
 )
 
 
@@ -43,6 +44,11 @@ def get_flashed_messages(request: Request, category: MessageCategory | str = "*"
     return to_return
 
 
+# ToDo: add_message_for(UserID, MessageSchema); just save the message to the database
+
+
 async def get_messages_for(user_id: UserID) -> list[MessageSchema]:
     # ToDo: do something with the database... idk
+    # ToDo: maybe add more parameters to specify whether the messages should be deleted after retrieval or should be
+    #       preserved for an upcoming request
     return []
