@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "dd9567ce1d1f1b103fba945315434f8b1f8b3160c139fe4c623d44e25c7b51ef"
+            "sha256": "902d66446dd36a7260b5664e92dbf9429a3cd13cbba90a9b2c94d62d77e82b31"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -516,8 +516,12 @@
             "extras": [
                 "bcrypt"
             ],
-            "git": "https://github.com/AlbertUnruh/passlib.git",
-            "ref": "9a00e2d749e995eb2b4592e5c14c1f91dd7f1932"
+            "hashes": [
+                "sha256:aa6bca462b8d8bda89c70b382f0c298a20b5560af6cbfa2dce410c0a2fb669f1",
+                "sha256:defd50f72b65c5402ab2c573830a6978e5f202ad0d984793c8dde2c4152ebe04"
+            ],
+            "index": "pypi",
+            "version": "==1.7.4"
         },
         "pillow": {
             "hashes": [

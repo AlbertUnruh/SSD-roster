@@ -85,3 +85,4 @@ known-modules = :[vendor,SSD_Roster,aenum,annotated_types,cryptography,databases
 per-file-ignores =
     SSD_Roster/routes/*.py:ANN201,DAL000
     SSD_Roster/app.py:ANN201,DAL000
+    SSD_Roster/src/monkey_patch.py:ANN201
