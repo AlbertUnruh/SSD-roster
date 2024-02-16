@@ -21,7 +21,7 @@ passlib = { version = "~=1.7.4", extras = ["bcrypt"] }
 pydantic = { version = "~=2.6.1", extras = ["email"] }
 pydantic-settings = "~=2.1.0"
 pyjwt = "~=2.8.0"
-python-multipart = "~=0.0.6"
+python-multipart = "~=0.0.9"
 pyyaml = "~=6.0.1"
 reportlab = "~=4.1.0"
 sqlalchemy = "*"  # databases==0.8.0 requires following version: sqlalchemy>=1.4.42,<1.5 --> can't use latest version :(
