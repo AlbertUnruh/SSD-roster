@@ -28,7 +28,7 @@ sqlalchemy = "*"  # databases==0.8.0 requires following version: sqlalchemy>=1.4
 uvicorn = { version = "~=0.27.1", extras = ["standard"] }
 
 [dev-packages]
-black = "~=24.1.1"
+black = "~=24.2.0"
 
 [requires]
 python_version = "3.11"
