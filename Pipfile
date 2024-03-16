@@ -25,7 +25,7 @@ python-multipart = "~=0.0.9"
 pyyaml = "~=6.0.1"
 reportlab = "~=4.1.0"
 sqlalchemy = "*"  # databases==0.8.0 requires following version: sqlalchemy>=1.4.42,<1.5 --> can't use latest version :(
-uvicorn = { version = "~=0.27.1", extras = ["standard"] }
+uvicorn = { version = "~=0.28.0", extras = ["standard"] }
 
 [dev-packages]
 black = "~=24.2.0"
