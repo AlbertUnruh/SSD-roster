@@ -23,8 +23,8 @@ class Timetable(TimetableSchema):
         return date.fromisocalendar(year, week, 1), date.fromisocalendar(year, week, 5)
 
     @staticmethod
-    def matrix_from_str1d(
-        str1d: Annotated[str, annotated_types.MinLen(20), annotated_types.MaxLen(20)], /
+    def matrix_from_form(
+        form_data: list[tuple[Annotated[str, annotated_types.MinLen(2), annotated_types.MaxLen(2)], str]], /
     ) -> Annotated[
         list[
             Annotated[
@@ -36,9 +36,10 @@ class Timetable(TimetableSchema):
         annotated_types.MinLen(5),
         annotated_types.MaxLen(5),
     ]:
+        data = dict(form_data)
         matrix = []
         for i in range(5):
             matrix.append([])
             for j in range(4):
-                matrix[-1].append(str1d[i * 5 + j])
+                matrix[-1].append(Availability(int(data[f"{i}{j}"])))
         return matrix
