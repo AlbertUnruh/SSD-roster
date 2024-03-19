@@ -136,3 +136,5 @@ async def download_roster(
 # ToDo: endpoint to view own (created by one self) rosters
 # ToDo: endpoint to submit an own roster
 # ToDo: endpoint to approve a roster
+
+# ToDo: endpoint for collaborative roster (logic for approval needed)
