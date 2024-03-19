@@ -4,11 +4,11 @@ from __future__ import annotations
 from typing import Annotated
 
 # fastapi
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Request, Security
 from fastapi.responses import HTMLResponse, RedirectResponse
 
 # local
-from SSD_Roster.src.models import UserID, UserSchema
+from SSD_Roster.src.models import Scope, UserID, UserSchema
 from SSD_Roster.src.oauth2 import get_current_user
 
 
@@ -50,7 +50,7 @@ async def current_user(
 )
 async def see_user(
     user_id: UserID,
+    user: Annotated[UserSchema | None, Security(get_current_user, scopes=[Scope.SEE_USERS])],
 ):
     # ToDo: actually implement it with following information: timetable, age, access level
-    # ToDo: restrict endpoint to logged in users only
     return f"User #{user_id}\n<timetable-link>"

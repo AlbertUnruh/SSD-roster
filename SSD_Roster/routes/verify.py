@@ -5,14 +5,14 @@ from pydantic import EmailStr, SecretStr
 from typing import Annotated, Optional
 
 # fastapi
-from fastapi import APIRouter, Form, Request
-from fastapi.responses import HTMLResponse, RedirectResponse, Response
+from fastapi import APIRouter, Form, Request, Security
+from fastapi.responses import HTMLResponse, ORJSONResponse, RedirectResponse, Response
 
 # local
 from SSD_Roster.src.database import database
 from SSD_Roster.src.messages import flash
-from SSD_Roster.src.models import MessageCategory, UserModel, VerificationCodesModel
-from SSD_Roster.src.oauth2 import get_password_hash
+from SSD_Roster.src.models import MessageCategory, Scope, UserID, UserModel, UserSchema, VerificationCodesModel
+from SSD_Roster.src.oauth2 import get_current_user, get_password_hash
 from SSD_Roster.src.templates import templates
 from SSD_Roster.src.verification import verify_code
 
@@ -80,4 +80,39 @@ async def manage_verification(
     return request.app.url_path_for("login")
 
 
-# ToDo: endpoint for admins to verify a user
+@router.get(
+    "/queue/",
+    summary="Queue for verification by admins",
+    response_class=HTMLResponse,
+)
+async def admin_queue(
+    request: Request,
+    response: Response,
+    user: Annotated[UserSchema | None, Security(get_current_user, scopes=[Scope.MANAGE_USERS])],
+): ...  # ToDo: get queue
+
+
+@router.post(
+    "/queue/accept",
+    summary="Accept a user from queue",
+    response_class=ORJSONResponse,
+)
+async def admin_accept(
+    request: Request,
+    response: Response,
+    user_id: Annotated[UserID, Form()],
+    user: Annotated[UserSchema | None, Security(get_current_user, scopes=[Scope.MANAGE_USERS])],
+): ...  # ToDo: accept user
+
+
+@router.post(
+    "/queue/reject",
+    summary="Reject a user from queue",
+    response_class=ORJSONResponse,
+)
+async def admin_reject(
+    request: Request,
+    response: Response,
+    user_id: Annotated[UserID, Form()],
+    user: Annotated[UserSchema | None, Security(get_current_user, scopes=[Scope.MANAGE_USERS])],
+): ...  # ToDo: reject user

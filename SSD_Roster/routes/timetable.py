@@ -4,11 +4,12 @@ from __future__ import annotations
 from datetime import datetime, timedelta
 
 # typing
+import annotated_types
 from typing import Annotated
 
 # fastapi
-from fastapi import APIRouter, Request, Security
-from fastapi.responses import HTMLResponse
+from fastapi import APIRouter, Form, Request, Security
+from fastapi.responses import HTMLResponse, ORJSONResponse, Response
 
 # local
 from SSD_Roster.src.database import database
@@ -85,4 +86,41 @@ async def see_users_timetable(
     )
 
 
-# ToDo: endpoint to create/edit personal timetable
+@router.get(
+    "/edit",
+    summary="Edit personal timetable",
+    response_class=HTMLResponse,
+)
+async def edit(
+    request: Request,
+    response: Response,
+    user: Annotated[UserSchema | None, Security(get_current_user, scopes=[Scope.MANAGE_OWN_CALENDAR])],
+    page: PageID,
+):
+    # date = datetime.utcnow() + timedelta(weeks=page)
+    # year = date.year
+    # week = date.isocalendar().week
+    pass  # ToDo: display HTML (with radiobuttons for selection?)
+
+
+@router.post(
+    "/submit",
+    summary="Submit edits",
+    response_class=ORJSONResponse,
+)
+async def submit(
+    request: Request,
+    response: Response,
+    user: Annotated[UserSchema, Security(get_current_user, scopes=[Scope.MANAGE_OWN_CALENDAR])],
+    page: Annotated[PageID, Form()],
+    matrix_str1d: Annotated[str, annotated_types.MinLen(20), annotated_types.MaxLen(20), Form()],
+):
+    date = datetime.utcnow() + timedelta(weeks=page)
+    year = date.year
+    week = date.isocalendar().week
+
+    timetable = Timetable()
+    timetable.availability_matrix = Timetable.matrix_from_str1d(matrix_str1d)
+    timetable.user_id = user.user_id
+    timetable.date_anchor = (year, week)
+    pass  # ToDo: logic to update database (should be straight forward)
