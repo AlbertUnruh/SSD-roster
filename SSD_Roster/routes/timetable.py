@@ -26,7 +26,7 @@ router = APIRouter(
 
 @router.get(
     "/",
-    summary="Gives an overview what can be done here",
+    include_in_schema=False,
     response_class=HTMLResponse,
 )
 async def overview():
@@ -36,7 +36,9 @@ async def overview():
 
 @router.get(
     "/edit",
-    summary="Edit personal timetable",
+    # ToDo: make a .json-variant (somehow)
+    # summary="Edit personal timetable",
+    include_in_schema=False,
     response_class=HTMLResponse,
 )
 async def edit_timetable(
@@ -85,7 +87,9 @@ async def edit_timetable(
 
 @router.post(
     "/submit",
-    summary="Submit edits",
+    # ToDo: make a .json-variant
+    # summary="Submit edits",
+    include_in_schema=False,
     response_class=RedirectResponse,
 )
 async def submit_timetable(
@@ -112,15 +116,16 @@ async def submit_timetable(
 
 @router.get(
     "/{user_id}",
-    summary="Displays the timetable of an user",
-    responses={404: {"description": "Not Found"}},
+    # ToDo: make a .json-variant
+    # summary="Displays the timetable of an user",
+    include_in_schema=False,
     response_class=HTMLResponse,
 )
 async def see_users_timetable(
     request: Request,
+    user: Annotated[UserSchema | None, Security(get_current_user, scopes=[Scope.SEE_OTHERS_CALENDAR])],
     user_id: UserID,
     page: PageID = 0,
-    user: Annotated[UserSchema | None, Security(get_current_user, scopes=[Scope.SEE_OTHERS_CALENDAR])] = None,
 ):
     date = datetime.utcnow() + timedelta(weeks=page)
     year = date.year

@@ -25,7 +25,7 @@ router = APIRouter(
 
 @router.get(
     "/",
-    summary="Displayed page to verify",
+    include_in_schema=False,
     response_class=HTMLResponse,
 )
 async def verify(
@@ -38,7 +38,9 @@ async def verify(
 
 @router.post(
     "/",
-    summary="Registration-manager",
+    # ToDo: make a .json-variant
+    # summary="Registration-manager",
+    include_in_schema=False,
     response_class=RedirectResponse,
 )
 async def manage_verification(
@@ -82,7 +84,9 @@ async def manage_verification(
 
 @router.get(
     "/queue/",
-    summary="Queue for verification by admins",
+    # ToDo: make a .json-variant
+    # summary="Queue for verification by admins",
+    include_in_schema=False,
     response_class=HTMLResponse,
 )
 async def admin_queue(

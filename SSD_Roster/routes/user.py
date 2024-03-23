@@ -20,7 +20,9 @@ router = APIRouter(
 
 @router.get(
     "/",
-    summary="Returns a list of all users with their access level",
+    # ToDo: make a .json-variant
+    # summary="Returns a list of all users with their access level",
+    include_in_schema=False,
     response_class=HTMLResponse,
 )
 async def users():
@@ -30,7 +32,9 @@ async def users():
 
 @router.get(
     "/me/",
-    summary="Redirects to the current user",
+    # ToDo: make a .json-variant
+    # summary="Redirects to the current user",
+    include_in_schema=False,
     response_class=RedirectResponse,
 )
 async def current_user(
@@ -44,8 +48,9 @@ async def current_user(
 
 @router.get(
     "/{user_id}/",
-    summary="Displays a user",
-    responses={404: {"description": "Not Found"}},
+    # ToDo. make a .json-variant
+    # summary="Displays a user",
+    include_in_schema=False,
     response_class=HTMLResponse,
 )
 async def see_user(

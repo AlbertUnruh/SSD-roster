@@ -6,26 +6,26 @@ from typing import Annotated
 
 # fastapi
 from fastapi import APIRouter, Form, Request
-from fastapi.responses import HTMLResponse, RedirectResponse, Response
+from fastapi.responses import HTMLResponse, ORJSONResponse, RedirectResponse, Response
 
 # local
 from SSD_Roster.src.database import database
 from SSD_Roster.src.email import send_verification_email
 from SSD_Roster.src.messages import flash
-from SSD_Roster.src.models import MessageCategory, UserModel, VerificationCodesModel
+from SSD_Roster.src.models import DictResponseSchema, MessageCategory, UserModel, VerificationCodesModel
 from SSD_Roster.src.templates import templates
 from SSD_Roster.src.verification import generate_code
 
 
 router = APIRouter(
     prefix="/register",
-    tags=["register"],
+    tags=["login"],
 )
 
 
 @router.get(
     "/",
-    summary="Displayed page to register",
+    include_in_schema=False,
     response_class=HTMLResponse,
 )
 async def register(request: Request):
@@ -34,7 +34,7 @@ async def register(request: Request):
 
 @router.post(
     "/",
-    summary="Registration-manager",
+    include_in_schema=False,
     response_class=RedirectResponse,
 )
 async def manage_registration(
@@ -44,22 +44,60 @@ async def manage_registration(
     email: Annotated[EmailStr, Form()] = None,
     birthday: Annotated[PastDate, Form()] = None,
 ):
+    data: DictResponseSchema = await register_api(request, response, username, email, birthday)
+
+    response.status_code = 302
+
+    match data.code:
+        case 201:
+            flash(request, data.message)
+            return data.redirect
+        case 400:
+            pass  # the user may figure it out themselves that something is missing
+        case 403:
+            flash(request, data.message, MessageCategory.ERROR)
+        case 500:
+            flash(request, data.message, MessageCategory.DANGER)
+
+    return request.app.url_path_for("register")
+
+
+@router.post(
+    "/.json",
+    summary="Endpoint to register a new user",
+    response_class=ORJSONResponse,
+    responses={
+        201: {"model": DictResponseSchema, "description": "Everything worked; a redirect is included"},
+        400: {"model": DictResponseSchema, "description": "Some form-fields are missing or not well formatted"},
+        403: {"model": DictResponseSchema, "description": "Already registered (E-Mail/username)"},
+        500: {"model": DictResponseSchema, "description": "E-Mail could not be sent (or any other error...)"},
+    },
+)
+async def register_api(
+    request: Request,
+    response: Response,
+    username: Annotated[str, Form()] = None,
+    email: Annotated[EmailStr, Form()] = None,
+    birthday: Annotated[PastDate, Form()] = None,
+) -> DictResponseSchema:
     # everything set?
-    if any((username is None, email is None, birthday is None)):
-        response.status_code = 302
-        return request.app.url_path_for("register")
+    if (
+        missing := (["username"] if username is None else [])
+        + (["email"] if email is None else [])
+        + (["birthday"] if birthday is None else [])
+    ):
+        response.status_code = 400
+        return DictResponseSchema(message="Following form-fields need to be set: " + ", ".join(missing), code=400)
 
     # email already used?
     if await database.fetch_one(UserModel.select().where(UserModel.email == email)) is not None:
-        flash(request, f"The E-Mail {email} is already registered!", MessageCategory.ERROR)
-        response.status_code = 302
-        return request.app.url_path_for("register")
+        response.status_code = 403
+        return DictResponseSchema(message=f"The E-Mail {email} is already registered!", code=403)
 
     # username already used?
     if await database.fetch_one(UserModel.select().where(UserModel.username == username)) is not None:
-        flash(request, f"The username {username} is already registered!", MessageCategory.ERROR)
-        response.status_code = 302
-        return request.app.url_path_for("register")
+        response.status_code = 403
+        return DictResponseSchema(message=f"The username {username} is already registered!", code=403)
 
     user_id = await database.execute(
         UserModel.insert().values(
@@ -77,12 +115,16 @@ async def manage_registration(
     await database.execute(VerificationCodesModel.insert().values(user_id=user_id, email=email, code=code))
 
     if await send_verification_email(request, email, code):
-        flash(request, f"A code has been sent to {email}. Either enter it here or use the link in the mail.")
+        response.status_code = 201
+        return DictResponseSchema(
+            message=f"A code has been sent to {email}."
+            + (" Either enter it here or use the link in the mail." * (not request.url.path.endswith(".json"))),
+            code=201,
+            redirect=request.app.url_path_for("verify") + f"?email={email}",
+        )
     else:
-        flash(request, f"No email has been send to {email}! Please contact an admin!", MessageCategory.DANGER)
-
-    response.status_code = 302
-    return request.app.url_path_for("verify") + f"?email={email}"
+        response.status_code = 500
+        return DictResponseSchema(message=f"No email has been send to {email}! Please contact an admin!", code=500)
 
 
 # ToDo: maybe endpoint for admins to create users (which are user-verified immediately, just email-verification missing

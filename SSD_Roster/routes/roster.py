@@ -26,7 +26,9 @@ router = APIRouter(
 
 @router.get(
     "/",
-    summary="Redirects to the current roster",
+    # ToDo: make a .json-variant
+    # summary="Redirects to the current roster",
+    include_in_schema=False,
     response_class=RedirectResponse,
 )
 async def roster():
@@ -38,7 +40,9 @@ async def roster():
 
 @router.get(
     "/pdf",
-    summary="Redirects to the download of the current roster",
+    # ToDo: make a .json-variant
+    # summary="Redirects to the download of the current roster",
+    include_in_schema=False,
     response_class=RedirectResponse,
 )
 async def roster_pdf():
@@ -48,16 +52,17 @@ async def roster_pdf():
 
 @router.get(
     "/{year}/{week}/",
-    summary="Displays the official roster",
-    responses={404: {"description": "Not Found"}},
+    # ToDo: make a .json-variant
+    # summary="Displays the official roster",
+    include_in_schema=False,
     response_class=HTMLResponse,
 )
 async def see_roster(
     request: Request,
     response: Response,
+    user: Annotated[UserSchema | None, Security(get_current_user, scopes=[Scope.SEE_ROSTER])],
     year: Year,
     week: Week,
-    user: Annotated[UserSchema | None, Security(get_current_user, scopes=[Scope.SEE_ROSTER])],
 ):
     # ToDo: @HTML: add navigation (week before | current week | week after)*
     #              *with before/after being relative to displayed week
@@ -120,9 +125,9 @@ async def see_roster(
     response_class=Response,
 )
 async def download_roster(
+    user: Annotated[UserSchema | None, Security(get_current_user, scopes=[Scope.DOWNLOAD_ROSTER])],
     year: Year,
     week: Week,
-    user: Annotated[UserSchema | None, Security(get_current_user, scopes=[Scope.DOWNLOAD_ROSTER])],
 ):
     # ToDo: actually implement downloading the roster as a PDF
     return Response(

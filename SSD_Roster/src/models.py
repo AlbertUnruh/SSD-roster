@@ -18,6 +18,7 @@ __all__ = (
     "TimetableSchema",
     "TokenSchema",
     "MessageSchema",
+    "DictResponseSchema",
     "UserSchema",
     # models
     "UserModel",
@@ -372,6 +373,14 @@ class TokenSchema(BaseModel):
 class MessageSchema(BaseModel):
     message: str
     category: MessageCategory = MessageCategory.PRIMARY
+
+
+class DictResponseSchema(BaseModel):
+    message: str
+    code: Annotated[int, annotated_types.Ge(100), annotated_types.Lt(600)]
+
+    # optional
+    redirect: Optional[str]
 
 
 class UserSchema(BaseModel):

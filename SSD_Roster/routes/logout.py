@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+# standard library
+from textwrap import dedent
+
 # third party
 import jwt
 from jwt import PyJWTError
@@ -17,13 +20,19 @@ from SSD_Roster.src.models import MessageCategory, UserModel
 
 router = APIRouter(
     prefix="/logout",
-    tags=["logout"],
+    tags=["login"],
 )
 
 
 @router.get(
     "/",
     summary="Endpoint to logout",
+    description=dedent(
+        """
+    This endpoint isn't required for any API, as it just deletes the cookie.
+    Logout can be as simple as that.
+    """
+    ),
     response_class=RedirectResponse,
 )
 async def logout(

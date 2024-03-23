@@ -30,7 +30,7 @@ router = APIRouter(
 
 @router.get(
     "/",
-    summary="Displayed page to login",
+    include_in_schema=False,
     response_class=HTMLResponse,
 )
 async def login(request: Request):
@@ -39,7 +39,7 @@ async def login(request: Request):
 
 @router.post(
     "/",
-    summary="Login-manager",
+    summary="Endpoint for login",
     response_class=RedirectResponse,
 )
 async def manage_login(
