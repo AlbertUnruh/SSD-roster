@@ -8,11 +8,20 @@ from typing import Annotated
 
 # fastapi
 from fastapi import APIRouter, Request, Security
-from fastapi.responses import HTMLResponse, RedirectResponse, Response
+from fastapi.responses import HTMLResponse, ORJSONResponse, RedirectResponse, Response
 
 # local
 from SSD_Roster.src.database import database
-from SSD_Roster.src.models import GroupedScope, RosterModel, Scope, UserModel, UserSchema, Week, Year
+from SSD_Roster.src.models import (
+    DictResponseSchema,
+    GroupedScope,
+    RosterModel,
+    Scope,
+    UserModel,
+    UserSchema,
+    Week,
+    Year,
+)
 from SSD_Roster.src.oauth2 import get_current_user
 from SSD_Roster.src.roster import Roster
 from SSD_Roster.src.templates import templates
@@ -26,34 +35,52 @@ router = APIRouter(
 
 @router.get(
     "/",
-    # ToDo: make a .json-variant
-    # summary="Redirects to the current roster",
     include_in_schema=False,
     response_class=RedirectResponse,
 )
 async def roster():
-    date = datetime.utcnow()
-    year = date.year
-    week = date.isocalendar()[1]
-    return router.url_path_for("see_roster", year=year, week=week)
+    return (await roster_api()).redirect.removesuffix(".json")
 
 
 @router.get(
     "/pdf",
-    # ToDo: make a .json-variant
-    # summary="Redirects to the download of the current roster",
     include_in_schema=False,
     response_class=RedirectResponse,
 )
 async def roster_pdf():
+    return (await roster_pdf_api()).redirect
+
+
+@router.get(
+    "/.json",
+    summary="Get url for current roster",
+    response_class=ORJSONResponse,
+)
+async def roster_api() -> DictResponseSchema:
     iso = datetime.utcnow().isocalendar()
-    return router.url_path_for("download_roster", year=iso.year, week=iso.week)
+    return DictResponseSchema(
+        message="The url for the current roster",
+        code=200,
+        redirect=router.url_path_for("see_roster_api", year=iso.year, week=iso.week),
+    )
+
+
+@router.get(
+    "/pdf.json",
+    summary="Get url for current roster download",
+    response_class=ORJSONResponse,
+)
+async def roster_pdf_api() -> DictResponseSchema:
+    iso = datetime.utcnow().isocalendar()
+    return DictResponseSchema(
+        message="The url for the download of the current roster",
+        code=200,
+        redirect=router.url_path_for("download_roster", year=iso.year, week=iso.week),
+    )
 
 
 @router.get(
     "/{year}/{week}/",
-    # ToDo: make a .json-variant
-    # summary="Displays the official roster",
     include_in_schema=False,
     response_class=HTMLResponse,
 )
@@ -113,6 +140,20 @@ async def see_roster(
         },
         200 if db_roster is not None else 404,  # or like this ^^: 200+(db_roster is None)*204
     )
+
+
+@router.get(
+    "/{year}/{week}/.json",
+    summary="Displays the official roster",
+    response_class=HTMLResponse,
+)
+async def see_roster_api(
+    request: Request,
+    response: Response,
+    user: Annotated[UserSchema | None, Security(get_current_user, scopes=[Scope.SEE_ROSTER])],
+    year: Year,
+    week: Week,
+): ...  # ToDo: implement json-variant
 
 
 @router.get(
