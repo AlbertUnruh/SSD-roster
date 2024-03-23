@@ -70,8 +70,12 @@ async def manage_login(
         httponly=True,
     )
 
-    flash(request, f"Hello {user.displayed_name}, your login was successful", MessageCategory.SUCCESS)
-    # ToDo: maybe a birthday message if its their birthday?
+    if user.birthday.month == datetime.now().month and user.birthday.day == datetime.now().day:
+        greeting = f"Happy Birthday {user.displayed_name}! You've successfully logged in"
+    else:
+        greeting = f"Hello {user.displayed_name}, your login was successful"
+    flash(request, greeting, MessageCategory.SUCCESS)
+
     for message in await get_messages_for(
         user.user_id
     ):  # ToDo: update when ``get_messages_for`` is actually implemented
