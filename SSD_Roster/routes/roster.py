@@ -13,9 +13,11 @@ from fastapi.responses import HTMLResponse, ORJSONResponse, RedirectResponse, Re
 # local
 from SSD_Roster.src.database import database
 from SSD_Roster.src.models import (
-    DictResponseSchema,
     GroupedScope,
+    ResponseSchema,
     RosterModel,
+    RosterResponseSchema,
+    RosterSchema,
     Scope,
     UserModel,
     UserSchema,
@@ -56,9 +58,9 @@ async def roster_pdf():
     summary="Get url for current roster",
     response_class=ORJSONResponse,
 )
-async def roster_api() -> DictResponseSchema:
+async def roster_api() -> ResponseSchema:
     iso = datetime.utcnow().isocalendar()
-    return DictResponseSchema(
+    return ResponseSchema(
         message="The url for the current roster",
         code=200,
         redirect=router.url_path_for("see_roster_api", year=iso.year, week=iso.week),
@@ -70,9 +72,9 @@ async def roster_api() -> DictResponseSchema:
     summary="Get url for current roster download",
     response_class=ORJSONResponse,
 )
-async def roster_pdf_api() -> DictResponseSchema:
+async def roster_pdf_api() -> ResponseSchema:
     iso = datetime.utcnow().isocalendar()
-    return DictResponseSchema(
+    return ResponseSchema(
         message="The url for the download of the current roster",
         code=200,
         redirect=router.url_path_for("download_roster", year=iso.year, week=iso.week),
@@ -93,26 +95,15 @@ async def see_roster(
 ):
     # ToDo: @HTML: add navigation (week before | current week | week after)*
     #              *with before/after being relative to displayed week
-    db_roster: RosterModel | None = await database.fetch_one(
-        RosterModel.select().where(RosterModel.year == year, RosterModel.week == week)
-    )
-    if db_roster is None:
-        user_matrix = Roster.model_fields["user_matrix"].get_default()
-        published_by = None
-        published_at = None
-    else:
-        roster_ = Roster(**RosterModel.to_schema(db_roster).model_dump())
-        user_matrix = roster_.user_matrix
-        published_by = roster_.published_by
-        published_at = roster_.published_at
-
+    data: RosterResponseSchema = await see_roster_api(response, user, year, week)
+    rstr: RosterSchema = data.roster
     matrix = []
     _cache: dict[int | None, str] = {
-        published_by: await database.fetch_one(UserModel.select().where(UserModel.user_id == published_by))
-        or f"User #{published_by}",
+        rstr.published_by: await database.fetch_one(UserModel.select().where(UserModel.user_id == rstr.published_by))
+        or f"User #{rstr.published_by}",
         None: "",
     }
-    for day in user_matrix:
+    for day in rstr.user_matrix:
         matrix.append([])
         for shift in day:
             matrix[-1].append([])
@@ -130,30 +121,56 @@ async def see_roster(
         request,
         "roster.html",
         {
-            "week": week,
-            "year": year,
-            "published": published_at,
-            "user": published_by,
-            "user_url": request.app.url_path_for("user", user_id=published_by) if published_by else "#",
+            "week": rstr.date_anchor[1],
+            "year": rstr.date_anchor[0],
+            "published": rstr.published_at,
+            "user": rstr.published_by,
+            "user_url": request.app.url_path_for("user", user_id=rstr.published_by) if rstr.published_by else "#",
             "public_download": Scope.DOWNLOAD_ROSTER.value in GroupedScope.PUBLIC,
             "matrix": matrix,
         },
-        200 if db_roster is not None else 404,  # or like this ^^: 200+(db_roster is None)*204
+        data.code,
     )
 
 
 @router.get(
     "/{year}/{week}/.json",
     summary="Displays the official roster",
-    response_class=HTMLResponse,
+    responses={
+        200: {"model": RosterResponseSchema, "description": "Roster available"},
+        404: {"model": RosterResponseSchema, "description": "Not Found"},
+    },
+    response_class=ORJSONResponse,
 )
 async def see_roster_api(
-    request: Request,
     response: Response,
     user: Annotated[UserSchema | None, Security(get_current_user, scopes=[Scope.SEE_ROSTER])],
     year: Year,
     week: Week,
-): ...  # ToDo: implement json-variant
+) -> RosterResponseSchema:
+    db_roster: RosterModel | None = await database.fetch_one(
+        RosterModel.select().where(RosterModel.year == year, RosterModel.week == week)
+    )
+    if db_roster is None:
+        response.status_code = 404
+        return RosterResponseSchema(
+            message=f"Unable to find roster for year {year} and week {week}",
+            code=404,
+            roster=Roster(
+                user_matrix=Roster.model_fields["user_matrix"].get_default(),
+                date_anchor=(year, week),
+                published_by=None,
+                published_at=None,
+            ),
+        )
+    else:
+        roster_ = RosterModel.to_schema(db_roster)
+        response.status_code = 200
+        return RosterResponseSchema(
+            message=f"Roster for year {year} and week {week} (last updated: {roster_.published_at.strftime('%d/%m/%Y, %H:%M:%S')})",
+            code=200,
+            roster=roster_,
+        )
 
 
 @router.get(
@@ -166,15 +183,18 @@ async def see_roster_api(
     response_class=Response,
 )
 async def download_roster(
+    response: Response,
     user: Annotated[UserSchema | None, Security(get_current_user, scopes=[Scope.DOWNLOAD_ROSTER])],
     year: Year,
     week: Week,
 ):
-    # ToDo: actually implement downloading the roster as a PDF
+    data: RosterResponseSchema = await see_roster_api(response, user, year, week)
+    roster_: Roster = Roster(**data.roster.model_dump())
     return Response(
-        b"",
-        media_type="application/pdf",
+        roster_.export_to_pdf(),  # ToDo: depending on final implementation call another method here to get bytes
+        status_code=data.code,
         headers={"Content-Disposition": f'attachment; filename="SSD-roster-{year}-{week}.pdf"'},
+        media_type="application/pdf",
     )
 
 

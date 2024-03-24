@@ -18,7 +18,7 @@ __all__ = (
     "TimetableSchema",
     "TokenSchema",
     "MessageSchema",
-    "DictResponseSchema",
+    "ResponseSchema",
     "UserSchema",
     # models
     "UserModel",
@@ -49,10 +49,9 @@ from .abc import DBBaseModel, GroupedScopeStr
 
 
 UserID = Annotated[int, annotated_types.Gt(0)]
-PageID = Annotated[int, annotated_types.Ge(0)]  # for pagination at /timetable/{user_id}?page={N>=0}
+PageID = Annotated[int, annotated_types.Ge(0)]  # for pagination (e.g. at /timetable/{user_id}?page={N>=0})
 
-Year = Annotated[int, annotated_types.Ge(2023), annotated_types.Le(2100)]
-# 2023 is the project's begin and I would be impressed if this project lives until 2100
+Year = Annotated[int, annotated_types.Ge(datetime.min.year), annotated_types.Le(datetime.max.year)]
 Week = Annotated[int, annotated_types.Ge(1), annotated_types.Le(53)]
 # some years have 53 weeks instead of 52, so they'll be included
 
@@ -238,8 +237,8 @@ class RosterSchema(BaseModel):
     #            |User #3    |User #3    |User #3    |User #3    |User #3
 
     date_anchor: tuple[Year, Week]
-    published_by: UserID
-    published_at: datetime
+    published_by: Optional[UserID]
+    published_at: Optional[datetime]
 
     def to_model(self) -> RosterModel:
         roster_model = RosterModel()
@@ -375,12 +374,16 @@ class MessageSchema(BaseModel):
     category: MessageCategory = MessageCategory.PRIMARY
 
 
-class DictResponseSchema(BaseModel):
+class ResponseSchema(BaseModel):
     message: str
     code: Annotated[int, annotated_types.Ge(100), annotated_types.Lt(600)]
 
     # optional
-    redirect: Optional[str]
+    redirect: str = ""
+
+
+class RosterResponseSchema(ResponseSchema):
+    roster: RosterSchema
 
 
 class UserSchema(BaseModel):
