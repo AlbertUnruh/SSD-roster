@@ -19,6 +19,8 @@ __all__ = (
     "TokenSchema",
     "MessageSchema",
     "ResponseSchema",
+    "RosterResponseSchema",
+    "TimetableResponseSchema",
     "UserSchema",
     # models
     "UserModel",
@@ -384,6 +386,10 @@ class ResponseSchema(BaseModel):
 
 class RosterResponseSchema(ResponseSchema):
     roster: RosterSchema
+
+
+class TimetableResponseSchema(ResponseSchema):
+    timetable: TimetableSchema
 
 
 class UserSchema(BaseModel):

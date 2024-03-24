@@ -8,11 +8,20 @@ from typing import Annotated
 
 # fastapi
 from fastapi import APIRouter, Form, Request, Security
-from fastapi.responses import HTMLResponse, RedirectResponse, Response
+from fastapi.responses import HTMLResponse, ORJSONResponse, RedirectResponse, Response
 
 # local
 from SSD_Roster.src.database import database
-from SSD_Roster.src.models import PageID, Scope, TimetableModel, UserID, UserModel, UserSchema
+from SSD_Roster.src.models import (
+    PageID,
+    Scope,
+    TimetableModel,
+    TimetableResponseSchema,
+    TimetableSchema,
+    UserID,
+    UserModel,
+    UserSchema,
+)
 from SSD_Roster.src.oauth2 import get_current_user
 from SSD_Roster.src.templates import templates
 from SSD_Roster.src.timetable import Timetable
@@ -115,27 +124,23 @@ async def submit_timetable(
 
 
 @router.get(
-    "/{user_id}",
-    # ToDo: make a .json-variant
-    # summary="Displays the timetable of an user",
-    include_in_schema=False,
-    response_class=HTMLResponse,
+    "/{user_id}.json",
+    summary="The timetable of an user",
+    responses={
+        200: {"model": TimetableResponseSchema, "description": "Timetable available"},
+        404: {"model": TimetableResponseSchema, "description": "Not Found"},
+    },
+    response_class=ORJSONResponse,
 )
-async def see_users_timetable(
-    request: Request,
+async def see_users_timetable_api(
+    response: Response,
     user: Annotated[UserSchema | None, Security(get_current_user, scopes=[Scope.SEE_OTHERS_CALENDAR])],
     user_id: UserID,
     page: PageID = 0,
-):
+) -> TimetableResponseSchema:
     date = datetime.utcnow() + timedelta(weeks=page)
     year = date.year
     week = date.isocalendar().week
-
-    # navigation
-    url = request.app.url_path_for("see_users_timetable", user_id=user_id)
-    before = f"{url}?page={max(page - 1, 0)}"
-    current = f"{url}?page=0"
-    after = f"{url}?page={page + 1}"
 
     db_timetable: TimetableModel | None = await database.fetch_one(
         TimetableModel.select().where(
@@ -143,24 +148,53 @@ async def see_users_timetable(
         )
     )
     if db_timetable is None:
-        matrix = Timetable.model_fields["availability_matrix"].get_default()
+        response.status_code = 404
+        return TimetableResponseSchema(
+            message=f"Unable to find timetable for year {year} and week {week} (currently page {page})",
+            code=404,
+            timetable=TimetableSchema(
+                availability_matrix=Timetable.model_fields["availability_matrix"].get_default(),
+                date_anchor=(year, week),
+                user_id=user_id,
+            ),
+        )
     else:
-        timetable_ = Timetable(**TimetableModel.to_schema(db_timetable).model_dump())
-        matrix = timetable_.availability_matrix
+        response.status_code = 200
+        return TimetableResponseSchema(
+            message=f"Timetable for year {year} and week {week} (currently page {page})",
+            code=200,
+            timetable=TimetableModel.to_schema(db_timetable),
+        )
 
-    owner = await database.fetch_one(UserModel.select().where(UserModel.user_id == user_id))
+
+@router.get(
+    "/{user_id}",
+    include_in_schema=False,
+    response_class=HTMLResponse,
+)
+async def see_users_timetable(
+    request: Request,
+    response: Response,
+    user: Annotated[UserSchema | None, Security(get_current_user, scopes=[Scope.SEE_OTHERS_CALENDAR])],
+    user_id: UserID,
+    page: PageID = 0,
+):
+    data: TimetableResponseSchema = await see_users_timetable_api(response, user, user_id, page)
+
+    # navigation
+    url = request.app.url_path_for("see_users_timetable", user_id=data.timetable.user_id)
 
     return templates.TemplateResponse(
         request,
         "timetable.html",
         {
-            "week": week,
-            "year": year,
-            "user": owner,
-            "before": before,
-            "current": current,
-            "after": after,
-            "matrix": matrix,
+            "week": data.timetable.date_anchor[1],
+            "year": data.timetable.date_anchor[0],
+            "user": await database.fetch_one(UserModel.select().where(UserModel.user_id == data.timetable.user_id)),
+            "before": f"{url}?page={max(page - 1, 0)}",
+            "current": f"{url}?page=0",
+            "after": f"{url}?page={page + 1}",
+            "matrix": data.timetable.availability_matrix,
         },
-        200 if db_timetable is not None else 404,  # or like this ^^: 200+(db_timetable is None)*204
+        data.code,
     )

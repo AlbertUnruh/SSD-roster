@@ -156,7 +156,7 @@ async def see_roster_api(
         return RosterResponseSchema(
             message=f"Unable to find roster for year {year} and week {week}",
             code=404,
-            roster=Roster(
+            roster=RosterSchema(
                 user_matrix=Roster.model_fields["user_matrix"].get_default(),
                 date_anchor=(year, week),
                 published_by=None,
@@ -167,7 +167,8 @@ async def see_roster_api(
         roster_ = RosterModel.to_schema(db_roster)
         response.status_code = 200
         return RosterResponseSchema(
-            message=f"Roster for year {year} and week {week} (last updated: {roster_.published_at.strftime('%d/%m/%Y, %H:%M:%S')})",
+            message=f"Roster for year {year} and week {week} "
+            f"(last updated: {roster_.published_at.strftime('%d/%m/%Y, %H:%M:%S')})",
             code=200,
             roster=roster_,
         )
