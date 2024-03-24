@@ -45,7 +45,7 @@ async def overview():
 
 @router.get(
     "/edit",
-    # ToDo: make a .json-variant (somehow)
+    # ToDo: make a .api-variant (somehow)
     # summary="Edit personal timetable",
     include_in_schema=False,
     response_class=HTMLResponse,
@@ -96,7 +96,7 @@ async def edit_timetable(
 
 @router.post(
     "/submit",
-    # ToDo: make a .json-variant
+    # ToDo: make a .api-variant
     # summary="Submit edits",
     include_in_schema=False,
     response_class=RedirectResponse,
@@ -124,7 +124,7 @@ async def submit_timetable(
 
 
 @router.get(
-    "/{user_id}.json",
+    "/{user_id}.api",
     summary="The timetable of an user",
     responses={
         200: {"model": TimetableResponseSchema, "description": "Timetable available"},

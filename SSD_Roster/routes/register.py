@@ -63,7 +63,7 @@ async def manage_registration(
 
 
 @router.post(
-    "/.json",
+    "/.api",
     summary="Endpoint to register a new user",
     response_class=ORJSONResponse,
     responses={
@@ -118,7 +118,7 @@ async def register_api(
         response.status_code = 201
         return ResponseSchema(
             message=f"A code has been sent to {email}."
-            + (" Either enter it here or use the link in the mail." * (not request.url.path.endswith(".json"))),
+            + (" Either enter it here or use the link in the mail." * (not request.url.path.endswith(".api"))),
             code=201,
             redirect=request.app.url_path_for("verify") + f"?email={email}",
         )

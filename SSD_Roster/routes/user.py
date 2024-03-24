@@ -5,10 +5,10 @@ from typing import Annotated
 
 # fastapi
 from fastapi import APIRouter, Depends, Request, Security
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, ORJSONResponse, RedirectResponse, Response
 
 # local
-from SSD_Roster.src.models import Scope, UserID, UserSchema
+from SSD_Roster.src.models import MessageSchema, MessagesResponseSchema, ResponseSchema, Scope, UserID, UserSchema
 from SSD_Roster.src.oauth2 import get_current_user
 
 
@@ -20,7 +20,7 @@ router = APIRouter(
 
 @router.get(
     "/",
-    # ToDo: make a .json-variant
+    # ToDo: make a .api-variant (on hold until this function has a proper implementation)
     # summary="Returns a list of all users with their access level",
     include_in_schema=False,
     response_class=HTMLResponse,
@@ -32,23 +32,81 @@ async def users():
 
 @router.get(
     "/me/",
-    # ToDo: make a .json-variant
-    # summary="Redirects to the current user",
     include_in_schema=False,
     response_class=RedirectResponse,
 )
 async def current_user(
     request: Request,
+    response: Response,
     user: Annotated[UserSchema | None, Depends(get_current_user)],
 ):
-    if user is not None:
-        return request.app.url_path_for("see_user", user_id=user.user_id)
-    return request.app.url_path_for("login")
+    return (await current_user_api(request, response, user)).redirect
+
+
+@router.get(
+    "/me/.api",
+    summary="Redirects to the current user",
+    responses={
+        200: {"model": ResponseSchema, "description": "Redirect available"},
+        401: {"model": ResponseSchema, "description": "Not logged in!"},
+    },
+    response_class=ORJSONResponse,
+)
+async def current_user_api(
+    request: Request,
+    response: Response,
+    user: Annotated[UserSchema | None, Depends(get_current_user)],
+) -> ResponseSchema:
+    if user is None:
+        response.status_code = 401
+        return ResponseSchema(
+            message="Try again after you are logged in!",
+            code=401,
+            redirect=request.app.url_path_for("login"),
+        )
+    else:
+        response.status_code = 200
+        return ResponseSchema(
+            message="Redirect available!",
+            code=200,
+            redirect=request.app.url_path_for("see_user", user_id=user.user_id),
+        )
+
+
+@router.get(
+    "/me/messages.api",
+    summary="Get messages for the current user",
+    responses={
+        200: {"model": MessagesResponseSchema, "description": "List of all messages"},
+        401: {"model": ResponseSchema, "description": "Not logged in!"},
+    },
+    response_class=ORJSONResponse,
+)
+async def get_messages_api(
+    request: Request, response: Response, user: Annotated[UserSchema | None, Depends(get_current_user)]
+) -> MessagesResponseSchema | ResponseSchema:
+    if user is None:
+        response.status_code = 401
+        return ResponseSchema(
+            message="Try again after you are logged in!",
+            code=401,
+            redirect=request.app.url_path_for("login"),
+        )
+
+    messages: list[MessageSchema] = []  # ToDo: connect to database
+    count = len(messages)
+    response.status_code = 200
+    return MessagesResponseSchema(
+        message=f"You've got {count} message{'s'*(count!=1)}",
+        code=200,
+        count=count,
+        messages=messages,
+    )
 
 
 @router.get(
     "/{user_id}/",
-    # ToDo. make a .json-variant
+    # ToDo. make a .api-variant (on hold until this function has a proper implementation)
     # summary="Displays a user",
     include_in_schema=False,
     response_class=HTMLResponse,

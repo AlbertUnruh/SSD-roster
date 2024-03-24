@@ -38,7 +38,7 @@ async def verify(
 
 @router.post(
     "/",
-    # ToDo: make a .json-variant
+    # ToDo: make a .api-variant
     # summary="Registration-manager",
     include_in_schema=False,
     response_class=RedirectResponse,
@@ -84,7 +84,7 @@ async def manage_verification(
 
 @router.get(
     "/queue/",
-    # ToDo: make a .json-variant
+    # ToDo: make a .api-variant
     # summary="Queue for verification by admins",
     include_in_schema=False,
     response_class=HTMLResponse,

@@ -41,7 +41,7 @@ router = APIRouter(
     response_class=RedirectResponse,
 )
 async def roster():
-    return (await roster_api()).redirect.removesuffix(".json")
+    return (await roster_api()).redirect.removesuffix(".api")
 
 
 @router.get(
@@ -54,7 +54,7 @@ async def roster_pdf():
 
 
 @router.get(
-    "/.json",
+    "/.api",
     summary="Get url for current roster",
     response_class=ORJSONResponse,
 )
@@ -68,7 +68,7 @@ async def roster_api() -> ResponseSchema:
 
 
 @router.get(
-    "/pdf.json",
+    "/pdf.api",
     summary="Get url for current roster download",
     response_class=ORJSONResponse,
 )
@@ -134,7 +134,7 @@ async def see_roster(
 
 
 @router.get(
-    "/{year}/{week}/.json",
+    "/{year}/{week}/.api",
     summary="Displays the official roster",
     responses={
         200: {"model": RosterResponseSchema, "description": "Roster available"},

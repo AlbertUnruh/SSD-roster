@@ -16,12 +16,14 @@ __all__ = (
     # schemas
     "RosterSchema",
     "TimetableSchema",
+    "UserSchema",
     "TokenSchema",
     "MessageSchema",
     "ResponseSchema",
     "RosterResponseSchema",
     "TimetableResponseSchema",
-    "UserSchema",
+    "LoginResponseSchema",
+    "MessagesResponseSchema",
     # models
     "UserModel",
     "RosterModel",
@@ -40,7 +42,7 @@ from sqlalchemy import Boolean, Column, Date, DateTime, Integer, Text
 
 # typing
 import annotated_types
-from pydantic import BaseModel, EmailStr, PastDate, SecretStr
+from pydantic import BaseModel, EmailStr, Field, PastDate, SecretStr
 from typing import Annotated, Optional
 
 # local
@@ -366,6 +368,31 @@ class TimetableSchema(BaseModel):
         return timetable_model
 
 
+class UserSchema(BaseModel):
+    user_id: UserID
+    username: str  # only for login
+    displayed_name: str
+    email: EmailStr
+    email_verified: bool  # first you have to verify your email
+    user_verified: bool  # then an admin has to verify you
+    birthday: PastDate
+    password: Optional[SecretStr]  # password will be set once email is verified
+    scopes: str
+
+    def to_model(self) -> UserModel:
+        user_model = UserModel()
+        user_model.user_id = self.user_id
+        user_model.username = self.username
+        user_model.displayed_name = self.displayed_name
+        user_model.email = self.email
+        user_model.email_verified = self.email_verified
+        user_model.user_verified = self.user_verified
+        user_model.birthday = self.birthday
+        user_model.password = self.password
+        user_model.scopes = self.scopes
+        return user_model
+
+
 class TokenSchema(BaseModel):
     user_id: UserID
     scopes: list[Scope]
@@ -392,29 +419,31 @@ class TimetableResponseSchema(ResponseSchema):
     timetable: TimetableSchema
 
 
-class UserSchema(BaseModel):
+class LoginResponseSchema(ResponseSchema):
+    user: UserSchema = Field(exclude=True)
     user_id: UserID
-    username: str  # only for login
-    displayed_name: str
-    email: EmailStr
-    email_verified: bool  # first you have to verify your email
-    user_verified: bool  # then an admin has to verify you
-    birthday: PastDate
-    password: Optional[SecretStr]  # password will be set once email is verified
-    scopes: str
+    token: str
+    expiration: datetime
 
-    def to_model(self) -> UserModel:
-        user_model = UserModel()
-        user_model.user_id = self.user_id
-        user_model.username = self.username
-        user_model.displayed_name = self.displayed_name
-        user_model.email = self.email
-        user_model.email_verified = self.email_verified
-        user_model.user_verified = self.user_verified
-        user_model.birthday = self.birthday
-        user_model.password = self.password
-        user_model.scopes = self.scopes
-        return user_model
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "message": "Happy Birthday [USERNAME]! You've successfully logged in",
+                    "code": 200,
+                    "redirect": "",
+                    "user_id": 42,
+                    "token": "[REDACTED-TOKEN]",
+                    "expiration": "2024-03-25T17:49:49Z",
+                }
+            ]
+        }
+    }
+
+
+class MessagesResponseSchema(ResponseSchema):
+    count: Annotated[int, annotated_types.Ge(0)]
+    messages: list[MessageSchema]
 
 
 # ---------- MODELS ---------- #
