@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 # standard library
+import asyncio
 from datetime import datetime
 
 # typing
@@ -192,7 +193,8 @@ async def download_roster(
     data: RosterResponseSchema = await see_roster_api(response, user, year, week)
     roster_: Roster = Roster(**data.roster.model_dump())
     return Response(
-        roster_.export_to_pdf(),  # ToDo: depending on final implementation call another method here to get bytes
+        # ToDo: depending on final implementation call another method here to get bytes
+        await asyncio.to_thread(roster_.export_to_pdf),
         status_code=data.code,
         headers={"Content-Disposition": f'attachment; filename="SSD-roster-{year}-{week}.pdf"'},
         media_type="application/pdf",
