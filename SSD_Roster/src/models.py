@@ -45,7 +45,7 @@ from sqlalchemy import Boolean, Column, Date, DateTime, Integer, Text
 
 # typing
 import annotated_types
-from pydantic import BaseModel, EmailStr, Field, FutureDate, PastDate, SecretStr
+from pydantic import BaseModel, EmailStr, Field, FutureDatetime, PastDate, SecretStr
 from typing import Annotated, Literal, Optional
 
 # local
@@ -426,7 +426,7 @@ class LoginResponseSchema(ResponseSchema):
     user: UserSchema = Field(exclude=True)
     user_id: UserID
     token: str
-    expiration: FutureDate
+    expiration: FutureDatetime
 
     model_config = {  # to remove `user` from docs as it's not exported
         "json_schema_extra": {
@@ -451,6 +451,7 @@ class MessagesResponseSchema(ResponseSchema):
 
 class MinimalUserSchema(BaseModel):
     user_id: UserID
+    email: EmailStr
     displayed_name: str
     age: Annotated[int, annotated_types.Ge(0)]
     scopes: Annotated[str, Literal["PUBLIC", "USER", "ADMIN", "OWNER"]]

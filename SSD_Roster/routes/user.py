@@ -63,6 +63,7 @@ async def users_api(
         all_users.append(
             MinimalUserSchema(
                 user_id=db_user.user_id,
+                email=db_user.email,
                 displayed_name=db_user.displayed_name,
                 age=calculate_age(db_user.birthday),
                 scopes=db_user.scopes,
@@ -186,6 +187,7 @@ async def see_user_api(
         code=200,
         user=UserModel.to_schema(requested_user),
         user_id=user_id,
+        email=requested_user.email,
         displayed_name=name,
         birthday=birthday,
         age=calculate_age(birthday),
