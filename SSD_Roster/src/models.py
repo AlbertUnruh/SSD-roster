@@ -24,6 +24,9 @@ __all__ = (
     "TimetableResponseSchema",
     "LoginResponseSchema",
     "MessagesResponseSchema",
+    "MinimalUserSchema",
+    "UserResponseSchema",
+    "UsersResponseSchema",
     # models
     "UserModel",
     "RosterModel",
@@ -42,8 +45,8 @@ from sqlalchemy import Boolean, Column, Date, DateTime, Integer, Text
 
 # typing
 import annotated_types
-from pydantic import BaseModel, EmailStr, Field, PastDate, SecretStr
-from typing import Annotated, Optional
+from pydantic import BaseModel, EmailStr, Field, FutureDate, PastDate, SecretStr
+from typing import Annotated, Literal, Optional
 
 # local
 from .abc import DBBaseModel, GroupedScopeStr
@@ -423,9 +426,9 @@ class LoginResponseSchema(ResponseSchema):
     user: UserSchema = Field(exclude=True)
     user_id: UserID
     token: str
-    expiration: datetime
+    expiration: FutureDate
 
-    model_config = {
+    model_config = {  # to remove `user` from docs as it's not exported
         "json_schema_extra": {
             "examples": [
                 {
@@ -444,6 +447,42 @@ class LoginResponseSchema(ResponseSchema):
 class MessagesResponseSchema(ResponseSchema):
     count: Annotated[int, annotated_types.Ge(0)]
     messages: list[MessageSchema]
+
+
+class MinimalUserSchema(BaseModel):
+    user_id: UserID
+    displayed_name: str
+    age: Annotated[int, annotated_types.Ge(0)]
+    scopes: Annotated[str, Literal["PUBLIC", "USER", "ADMIN", "OWNER"]]
+
+
+class UserResponseSchema(ResponseSchema, MinimalUserSchema):
+    user: UserSchema = Field(exclude=True)
+    birthday: PastDate
+    timetable: str
+
+    model_config = {  # to remove `user` from docs as it's not exported
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "message": "Here some information about [USERNAME]",
+                    "code": 200,
+                    "redirect": "",
+                    "user_id": 42,
+                    "displayed_name": "[USERNAME]",
+                    "birthday": "2000-03-26",
+                    "age": 23,
+                    "timetable": "/timetable/42",
+                    "scopes": "USER",
+                }
+            ]
+        }
+    }
+
+
+class UsersResponseSchema(ResponseSchema):
+    count: Annotated[int, annotated_types.Ge(0)]
+    users: list[MinimalUserSchema]
 
 
 # ---------- MODELS ---------- #

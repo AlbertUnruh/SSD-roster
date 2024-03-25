@@ -8,8 +8,21 @@ from fastapi import APIRouter, Depends, Request, Security
 from fastapi.responses import HTMLResponse, ORJSONResponse, RedirectResponse, Response
 
 # local
-from SSD_Roster.src.models import MessageSchema, MessagesResponseSchema, ResponseSchema, Scope, UserID, UserSchema
+from SSD_Roster.src.database import database
+from SSD_Roster.src.models import (
+    MessageSchema,
+    MessagesResponseSchema,
+    MinimalUserSchema,
+    ResponseSchema,
+    Scope,
+    UserID,
+    UserModel,
+    UserResponseSchema,
+    UserSchema,
+    UsersResponseSchema,
+)
 from SSD_Roster.src.oauth2 import get_current_user
+from SSD_Roster.src.utils import calculate_age
 
 
 router = APIRouter(
@@ -20,14 +33,51 @@ router = APIRouter(
 
 @router.get(
     "/",
-    # ToDo: make a .api-variant (on hold until this function has a proper implementation)
-    # summary="Returns a list of all users with their access level",
     include_in_schema=False,
     response_class=HTMLResponse,
 )
-async def users():
-    # ToDo: a list containing every user with their respective access level
-    return "ToDo: a list containing every user with their respective access level"
+async def users(
+    response: Response,
+    user: Annotated[UserSchema | None, Security(get_current_user, scopes=[Scope.SEE_USERS])],
+):
+    # ToDo: make a nice page with data
+    data = await users_api(response, user)
+    response.status_code = data.code
+    return __import__("orjson").dumps(data.model_dump(mode="json"))
+
+
+@router.get(
+    "/.api",
+    summary="Get details about all users",
+    responses={
+        200: {"model": UsersResponseSchema, "description": "Details of the requested user"},
+    },
+    response_class=ORJSONResponse,
+)
+async def users_api(
+    response: Response,
+    user: Annotated[UserSchema | None, Security(get_current_user, scopes=[Scope.SEE_USERS])],
+) -> UsersResponseSchema | ResponseSchema:
+    all_users: list[MinimalUserSchema] = []
+    for db_user in await database.fetch_all(UserModel.select()):
+        all_users.append(
+            MinimalUserSchema(
+                user_id=db_user.user_id,
+                displayed_name=db_user.displayed_name,
+                age=calculate_age(db_user.birthday),
+                scopes=db_user.scopes,
+            )
+        )
+
+    count = len(all_users)
+
+    response.status_code = 200
+    return UsersResponseSchema(
+        message=f"Bulk information about {count} user{'s'*(count!=1)}",
+        code=200,
+        count=count,
+        users=all_users,
+    )
 
 
 @router.get(
@@ -83,7 +133,9 @@ async def current_user_api(
     response_class=ORJSONResponse,
 )
 async def get_messages_api(
-    request: Request, response: Response, user: Annotated[UserSchema | None, Depends(get_current_user)]
+    request: Request,
+    response: Response,
+    user: Annotated[UserSchema | None, Depends(get_current_user)],
 ) -> MessagesResponseSchema | ResponseSchema:
     if user is None:
         response.status_code = 401
@@ -105,15 +157,55 @@ async def get_messages_api(
 
 
 @router.get(
+    "/{user_id}/.api",
+    summary="Get details about the requested user",
+    responses={
+        200: {"model": UserResponseSchema, "description": "Details of the requested user"},
+        404: {"model": ResponseSchema, "description": "User not found!"},
+    },
+    response_class=ORJSONResponse,
+)
+async def see_user_api(
+    request: Request,
+    response: Response,
+    user: Annotated[UserSchema | None, Security(get_current_user, scopes=[Scope.SEE_USERS])],
+    user_id: UserID,
+) -> UserResponseSchema | ResponseSchema:
+    if (requested_user := await database.fetch_one(UserModel.select().where(UserModel.user_id == user_id))) is None:
+        response.status_code = 404
+        return ResponseSchema(
+            message=f"Unable to find user with ID {user_id}",
+            code=404,
+        )
+
+    birthday = requested_user.birthday
+
+    response.status_code = 200
+    return UserResponseSchema(
+        message=f"Here some information about {(name:=requested_user.displayed_name)}",
+        code=200,
+        user=UserModel.to_schema(requested_user),
+        user_id=user_id,
+        displayed_name=name,
+        birthday=birthday,
+        age=calculate_age(birthday),
+        timetable=request.app.url_path_for("see_users_timetable", user_id=user_id),
+        scopes=requested_user.scopes,
+    )
+
+
+@router.get(
     "/{user_id}/",
-    # ToDo. make a .api-variant (on hold until this function has a proper implementation)
-    # summary="Displays a user",
     include_in_schema=False,
     response_class=HTMLResponse,
 )
 async def see_user(
-    user_id: UserID,
+    request: Request,
+    response: Response,
     user: Annotated[UserSchema | None, Security(get_current_user, scopes=[Scope.SEE_USERS])],
+    user_id: UserID,
 ):
-    # ToDo: actually implement it with following information: timetable, age, access level
-    return f"User #{user_id}\n<timetable-link>"
+    # ToDo: make a nice page with data
+    data = await see_user_api(request, response, user, user_id)
+    response.status_code = data.code
+    return __import__("orjson").dumps(data.model_dump(mode="json"))

@@ -1,12 +1,16 @@
 from __future__ import annotations
 
 
-__all__ = ("might_raise",)
+__all__ = (
+    "might_raise",
+    "calculate_age",
+)
 
 
 # standard library
 import sys
 import traceback
+from datetime import date, datetime
 
 # typing
 from typing import Awaitable, Literal, overload, TypeVar
@@ -35,3 +39,8 @@ async def might_raise(
         return False, None
     else:
         return True, ret
+
+
+def calculate_age(reference: date) -> int:
+    today = date.fromordinal(datetime.utcnow().toordinal())
+    return today.year - reference.year - ((today.month, today.day) < (reference.month, reference.day))
