@@ -54,7 +54,7 @@ async def send_verification_email(request: Request, to: EmailStr, code: str) -> 
                 {
                     "code": code,
                     "url": f"{request.base_url.scheme}://{request.base_url.hostname}:{request.base_url.port}"
-                    f"{request.app.url_path_for('verify')}?email={to}&code={code}",
+                    f"{request.app.url_path_for("verify")}?email={to}&code={code}",
                 },
             ).body.decode("utf-8"),
             subtype=MessageType.html,
