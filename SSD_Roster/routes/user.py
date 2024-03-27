@@ -74,7 +74,7 @@ async def users_api(
 
     response.status_code = 200
     return UsersResponseSchema(
-        message=f"Bulk information about {count} user{'s'*(count != 1)}",
+        message=f"Bulk information about {count} user{"s"*(count != 1)}",
         code=200,
         count=count,
         users=all_users,
@@ -150,7 +150,7 @@ async def get_messages_api(
     count = len(messages)
     response.status_code = 200
     return MessagesResponseSchema(
-        message=f"You've got {count} message{'s'*(count != 1)}",
+        message=f"You've got {count} message{"s"*(count != 1)}",
         code=200,
         count=count,
         messages=messages,
