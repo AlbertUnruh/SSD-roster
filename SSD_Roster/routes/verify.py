@@ -100,7 +100,7 @@ async def manage_verification_api(
         return ResponseSchema(
             message="Verification not possible unless "
             + " and ".join(_message_fractals)
-            + f" {'are' if len(_message_fractals)!=1 else 'is'} set!",
+            + f" {'are' if len(_message_fractals) != 1 else 'is'} set!",
             code=401,
         )
 
@@ -178,7 +178,7 @@ async def admin_queue_api(
 
     response.status_code = 200
     return UsersResponseSchema(
-        message=f"Queue containing {count} user{'s'*(count!=1)}",
+        message=f"Queue containing {count} user{'s'*(count != 1)}",
         code=200,
         count=count,
         users=all_users,
