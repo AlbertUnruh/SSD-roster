@@ -8,7 +8,7 @@ repos:
       - id: check-merge-conflict
       - id: end-of-file-fixer
       - id: debug-statements
-        language_version: python3.11
+        language_version: python3.12
       - id: trailing-whitespace
         args: [--markdown-linebreak-ext=md]
   - repo: https://github.com/PyCQA/autoflake
@@ -20,7 +20,7 @@ repos:
     rev: 24.3.0
     hooks:
       - id: black
-        language_version: python3.11
+        language_version: python3.12
   - repo: https://github.com/PyCQA/isort
     rev: 5.13.2
     hooks:
@@ -50,7 +50,7 @@ repos:
           - flake8-requirements
           - pep8-naming
         args: [--requirements-max-depth=2]
-        language_version: python3.11
+        language_version: python3.12
 
 exclude:
   CNAME

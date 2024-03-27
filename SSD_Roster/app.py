@@ -43,7 +43,7 @@ app = FastAPI(
     version=__version__,
     docs_url=None,
     redoc_url=None,
-    middleware=[Middleware(SessionMiddleware, secret_key=settings.SECRET_KEY.get_secret_value())],
+    middleware=[Middleware(SessionMiddleware, secret_key=settings.SECRET_KEY.get_secret_value())],  # type: ignore
     lifespan=lifespan,
 )
 
