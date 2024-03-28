@@ -41,7 +41,8 @@ from datetime import datetime
 
 # third party
 from aenum import IntEnum, StrEnum, Unique
-from sqlalchemy.orm import Mapped, mapped_column as mc
+from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import mapped_column as mc
 from sqlalchemy.sql.sqltypes import Boolean, Date, DateTime, Integer, Text
 
 # typing
