@@ -41,15 +41,20 @@ from datetime import datetime
 
 # third party
 from aenum import IntEnum, StrEnum, Unique
-from sqlalchemy import Boolean, Column, Date, DateTime, Integer, Text
+from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import mapped_column as mc
+from sqlalchemy.sql.sqltypes import Boolean, Date, DateTime, Integer, Text
 
 # typing
 import annotated_types
 from pydantic import BaseModel, EmailStr, Field, FutureDatetime, PastDate, SecretStr
-from typing import Annotated, Literal, Optional
+from typing import Annotated, Literal, Optional, TypeVar
 
 # local
 from .abc import DBBaseModel, GroupedScopeStr
+
+
+_T = TypeVar("_T")
 
 
 # ---------- TYPES ---------- #
@@ -487,20 +492,25 @@ class UsersResponseSchema(ResponseSchema):
 
 
 # ---------- MODELS ---------- #
+_optional_integer_column = Annotated[Optional[_T], mc(Integer, nullable=True)]
+_integer_column = Annotated[_T, mc(Integer, nullable=False)]
+_optional_text_column = Annotated[Optional[_T], mc(Text, nullable=True)]
+_text_column = Annotated[_T, mc(Text, nullable=False)]
+_boolean_column = Annotated[bool, mc(Boolean, nullable=False)]
 
 
 class UserModel(DBBaseModel):
     __tablename__ = "user"
 
-    user_id: Column | UserID = Column(Integer, primary_key=True, unique=True, autoincrement=True, nullable=False)
-    username: Column | str = Column(Text, unique=True, nullable=False)
-    displayed_name: Column | str = Column(Text, nullable=False)
-    email: Column | EmailStr = Column(Text, unique=True, nullable=False)
-    email_verified: Column | bool = Column(Boolean, nullable=False)
-    user_verified: Column | bool = Column(Boolean, nullable=False)
-    birthday: Column | PastDate = Column(Date, nullable=False)
-    password: Column | Optional[SecretStr] = Column(Text, nullable=True)
-    scopes: Column | str = Column(Text, nullable=False)
+    user_id: Mapped[UserID] = mc(Integer, primary_key=True, unique=True, autoincrement=True, nullable=False)
+    username: Mapped[str] = mc(Text, unique=True, nullable=False)
+    displayed_name: Mapped[_text_column[str]]
+    email: Mapped[EmailStr] = mc(Text, unique=True, nullable=False)
+    email_verified: Mapped[_boolean_column]
+    user_verified: Mapped[_boolean_column]
+    birthday: Mapped[PastDate] = mc(Date, nullable=False)
+    password: Mapped[_optional_text_column[Optional[SecretStr]]]
+    scopes: Mapped[_text_column[str]]
 
     @staticmethod  # SQLAlchemy tries to find a column...
     def to_schema(self: UserModel) -> UserSchema:
@@ -520,72 +530,72 @@ class UserModel(DBBaseModel):
 class RosterModel(DBBaseModel):
     __tablename__ = "roster"
 
-    roster_id: Column | int = Column(Integer, primary_key=True, unique=True, autoincrement=True, nullable=False)
-    year: Column | Year = Column(Integer, nullable=False)
-    week: Column | Week = Column(Integer, nullable=False)
-    published: Column | bool = Column(Boolean, nullable=False)
-    published_by: Column | UserID = Column(Integer, nullable=False)
-    published_at: Column | datetime = Column(DateTime, nullable=False)
-    mo_s1p1: Column | Optional[UserID] = Column(Integer, nullable=True)
-    mo_s1p2: Column | Optional[UserID] = Column(Integer, nullable=True)
-    mo_s1p3: Column | Optional[UserID] = Column(Integer, nullable=True)
-    mo_s2p1: Column | Optional[UserID] = Column(Integer, nullable=True)
-    mo_s2p2: Column | Optional[UserID] = Column(Integer, nullable=True)
-    mo_s2p3: Column | Optional[UserID] = Column(Integer, nullable=True)
-    mo_s3p1: Column | Optional[UserID] = Column(Integer, nullable=True)
-    mo_s3p2: Column | Optional[UserID] = Column(Integer, nullable=True)
-    mo_s3p3: Column | Optional[UserID] = Column(Integer, nullable=True)
-    mo_bp1: Column | Optional[UserID] = Column(Integer, nullable=True)
-    mo_bp2: Column | Optional[UserID] = Column(Integer, nullable=True)
-    mo_bp3: Column | Optional[UserID] = Column(Integer, nullable=True)
-    tu_s1p1: Column | Optional[UserID] = Column(Integer, nullable=True)
-    tu_s1p2: Column | Optional[UserID] = Column(Integer, nullable=True)
-    tu_s1p3: Column | Optional[UserID] = Column(Integer, nullable=True)
-    tu_s2p1: Column | Optional[UserID] = Column(Integer, nullable=True)
-    tu_s2p2: Column | Optional[UserID] = Column(Integer, nullable=True)
-    tu_s2p3: Column | Optional[UserID] = Column(Integer, nullable=True)
-    tu_s3p1: Column | Optional[UserID] = Column(Integer, nullable=True)
-    tu_s3p2: Column | Optional[UserID] = Column(Integer, nullable=True)
-    tu_s3p3: Column | Optional[UserID] = Column(Integer, nullable=True)
-    tu_bp1: Column | Optional[UserID] = Column(Integer, nullable=True)
-    tu_bp2: Column | Optional[UserID] = Column(Integer, nullable=True)
-    tu_bp3: Column | Optional[UserID] = Column(Integer, nullable=True)
-    we_s1p1: Column | Optional[UserID] = Column(Integer, nullable=True)
-    we_s1p2: Column | Optional[UserID] = Column(Integer, nullable=True)
-    we_s1p3: Column | Optional[UserID] = Column(Integer, nullable=True)
-    we_s2p1: Column | Optional[UserID] = Column(Integer, nullable=True)
-    we_s2p2: Column | Optional[UserID] = Column(Integer, nullable=True)
-    we_s2p3: Column | Optional[UserID] = Column(Integer, nullable=True)
-    we_s3p1: Column | Optional[UserID] = Column(Integer, nullable=True)
-    we_s3p2: Column | Optional[UserID] = Column(Integer, nullable=True)
-    we_s3p3: Column | Optional[UserID] = Column(Integer, nullable=True)
-    we_bp1: Column | Optional[UserID] = Column(Integer, nullable=True)
-    we_bp2: Column | Optional[UserID] = Column(Integer, nullable=True)
-    we_bp3: Column | Optional[UserID] = Column(Integer, nullable=True)
-    th_s1p1: Column | Optional[UserID] = Column(Integer, nullable=True)
-    th_s1p2: Column | Optional[UserID] = Column(Integer, nullable=True)
-    th_s1p3: Column | Optional[UserID] = Column(Integer, nullable=True)
-    th_s2p1: Column | Optional[UserID] = Column(Integer, nullable=True)
-    th_s2p2: Column | Optional[UserID] = Column(Integer, nullable=True)
-    th_s2p3: Column | Optional[UserID] = Column(Integer, nullable=True)
-    th_s3p1: Column | Optional[UserID] = Column(Integer, nullable=True)
-    th_s3p2: Column | Optional[UserID] = Column(Integer, nullable=True)
-    th_s3p3: Column | Optional[UserID] = Column(Integer, nullable=True)
-    th_bp1: Column | Optional[UserID] = Column(Integer, nullable=True)
-    th_bp2: Column | Optional[UserID] = Column(Integer, nullable=True)
-    th_bp3: Column | Optional[UserID] = Column(Integer, nullable=True)
-    fr_s1p1: Column | Optional[UserID] = Column(Integer, nullable=True)
-    fr_s1p2: Column | Optional[UserID] = Column(Integer, nullable=True)
-    fr_s1p3: Column | Optional[UserID] = Column(Integer, nullable=True)
-    fr_s2p1: Column | Optional[UserID] = Column(Integer, nullable=True)
-    fr_s2p2: Column | Optional[UserID] = Column(Integer, nullable=True)
-    fr_s2p3: Column | Optional[UserID] = Column(Integer, nullable=True)
-    fr_s3p1: Column | Optional[UserID] = Column(Integer, nullable=True)
-    fr_s3p2: Column | Optional[UserID] = Column(Integer, nullable=True)
-    fr_s3p3: Column | Optional[UserID] = Column(Integer, nullable=True)
-    fr_bp1: Column | Optional[UserID] = Column(Integer, nullable=True)
-    fr_bp2: Column | Optional[UserID] = Column(Integer, nullable=True)
-    fr_bp3: Column | Optional[UserID] = Column(Integer, nullable=True)
+    roster_id: Mapped[int] = mc(Integer, primary_key=True, unique=True, autoincrement=True, nullable=False)
+    year: Mapped[_integer_column[Year]]
+    week: Mapped[_integer_column[Week]]
+    published: Mapped[_boolean_column]
+    published_by: Mapped[_integer_column[UserID]]
+    published_at: Mapped[datetime] = mc(DateTime, nullable=False)
+    mo_s1p1: Mapped[_optional_integer_column[UserID]]
+    mo_s1p2: Mapped[_optional_integer_column[UserID]]
+    mo_s1p3: Mapped[_optional_integer_column[UserID]]
+    mo_s2p1: Mapped[_optional_integer_column[UserID]]
+    mo_s2p2: Mapped[_optional_integer_column[UserID]]
+    mo_s2p3: Mapped[_optional_integer_column[UserID]]
+    mo_s3p1: Mapped[_optional_integer_column[UserID]]
+    mo_s3p2: Mapped[_optional_integer_column[UserID]]
+    mo_s3p3: Mapped[_optional_integer_column[UserID]]
+    mo_bp1: Mapped[_optional_integer_column[UserID]]
+    mo_bp2: Mapped[_optional_integer_column[UserID]]
+    mo_bp3: Mapped[_optional_integer_column[UserID]]
+    tu_s1p1: Mapped[_optional_integer_column[UserID]]
+    tu_s1p2: Mapped[_optional_integer_column[UserID]]
+    tu_s1p3: Mapped[_optional_integer_column[UserID]]
+    tu_s2p1: Mapped[_optional_integer_column[UserID]]
+    tu_s2p2: Mapped[_optional_integer_column[UserID]]
+    tu_s2p3: Mapped[_optional_integer_column[UserID]]
+    tu_s3p1: Mapped[_optional_integer_column[UserID]]
+    tu_s3p2: Mapped[_optional_integer_column[UserID]]
+    tu_s3p3: Mapped[_optional_integer_column[UserID]]
+    tu_bp1: Mapped[_optional_integer_column[UserID]]
+    tu_bp2: Mapped[_optional_integer_column[UserID]]
+    tu_bp3: Mapped[_optional_integer_column[UserID]]
+    we_s1p1: Mapped[_optional_integer_column[UserID]]
+    we_s1p2: Mapped[_optional_integer_column[UserID]]
+    we_s1p3: Mapped[_optional_integer_column[UserID]]
+    we_s2p1: Mapped[_optional_integer_column[UserID]]
+    we_s2p2: Mapped[_optional_integer_column[UserID]]
+    we_s2p3: Mapped[_optional_integer_column[UserID]]
+    we_s3p1: Mapped[_optional_integer_column[UserID]]
+    we_s3p2: Mapped[_optional_integer_column[UserID]]
+    we_s3p3: Mapped[_optional_integer_column[UserID]]
+    we_bp1: Mapped[_optional_integer_column[UserID]]
+    we_bp2: Mapped[_optional_integer_column[UserID]]
+    we_bp3: Mapped[_optional_integer_column[UserID]]
+    th_s1p1: Mapped[_optional_integer_column[UserID]]
+    th_s1p2: Mapped[_optional_integer_column[UserID]]
+    th_s1p3: Mapped[_optional_integer_column[UserID]]
+    th_s2p1: Mapped[_optional_integer_column[UserID]]
+    th_s2p2: Mapped[_optional_integer_column[UserID]]
+    th_s2p3: Mapped[_optional_integer_column[UserID]]
+    th_s3p1: Mapped[_optional_integer_column[UserID]]
+    th_s3p2: Mapped[_optional_integer_column[UserID]]
+    th_s3p3: Mapped[_optional_integer_column[UserID]]
+    th_bp1: Mapped[_optional_integer_column[UserID]]
+    th_bp2: Mapped[_optional_integer_column[UserID]]
+    th_bp3: Mapped[_optional_integer_column[UserID]]
+    fr_s1p1: Mapped[_optional_integer_column[UserID]]
+    fr_s1p2: Mapped[_optional_integer_column[UserID]]
+    fr_s1p3: Mapped[_optional_integer_column[UserID]]
+    fr_s2p1: Mapped[_optional_integer_column[UserID]]
+    fr_s2p2: Mapped[_optional_integer_column[UserID]]
+    fr_s2p3: Mapped[_optional_integer_column[UserID]]
+    fr_s3p1: Mapped[_optional_integer_column[UserID]]
+    fr_s3p2: Mapped[_optional_integer_column[UserID]]
+    fr_s3p3: Mapped[_optional_integer_column[UserID]]
+    fr_bp1: Mapped[_optional_integer_column[UserID]]
+    fr_bp2: Mapped[_optional_integer_column[UserID]]
+    fr_bp3: Mapped[_optional_integer_column[UserID]]
 
     @staticmethod  # SQLAlchemy tries to find a column...
     def to_schema(self: RosterModel) -> RosterSchema:
@@ -631,30 +641,30 @@ class RosterModel(DBBaseModel):
 class TimetableModel(DBBaseModel):
     __tablename__ = "timetable"
 
-    timetable_id: Column | int = Column(Integer, primary_key=True, unique=True, autoincrement=True, nullable=False)
-    user_id: Column | UserID = Column(Integer, nullable=False)
-    year: Column | Year = Column(Integer, nullable=False)
-    week: Column | Week = Column(Integer, nullable=False)
-    mo_s1: Column | Availability = Column(Integer, nullable=False)
-    mo_s2: Column | Availability = Column(Integer, nullable=False)
-    mo_s3: Column | Availability = Column(Integer, nullable=False)
-    mo_b: Column | Availability = Column(Integer, nullable=False)
-    tu_s1: Column | Availability = Column(Integer, nullable=False)
-    tu_s2: Column | Availability = Column(Integer, nullable=False)
-    tu_s3: Column | Availability = Column(Integer, nullable=False)
-    tu_b: Column | Availability = Column(Integer, nullable=False)
-    we_s1: Column | Availability = Column(Integer, nullable=False)
-    we_s2: Column | Availability = Column(Integer, nullable=False)
-    we_s3: Column | Availability = Column(Integer, nullable=False)
-    we_b: Column | Availability = Column(Integer, nullable=False)
-    th_s1: Column | Availability = Column(Integer, nullable=False)
-    th_s2: Column | Availability = Column(Integer, nullable=False)
-    th_s3: Column | Availability = Column(Integer, nullable=False)
-    th_b: Column | Availability = Column(Integer, nullable=False)
-    fr_s1: Column | Availability = Column(Integer, nullable=False)
-    fr_s2: Column | Availability = Column(Integer, nullable=False)
-    fr_s3: Column | Availability = Column(Integer, nullable=False)
-    fr_b: Column | Availability = Column(Integer, nullable=False)
+    timetable_id: Mapped[int] = mc(Integer, primary_key=True, unique=True, autoincrement=True, nullable=False)
+    user_id: Mapped[_integer_column[UserID]]
+    year: Mapped[_integer_column[Year]]
+    week: Mapped[_integer_column[Week]]
+    mo_s1: Mapped[_integer_column[Availability]]
+    mo_s2: Mapped[_integer_column[Availability]]
+    mo_s3: Mapped[_integer_column[Availability]]
+    mo_b: Mapped[_integer_column[Availability]]
+    tu_s1: Mapped[_integer_column[Availability]]
+    tu_s2: Mapped[_integer_column[Availability]]
+    tu_s3: Mapped[_integer_column[Availability]]
+    tu_b: Mapped[_integer_column[Availability]]
+    we_s1: Mapped[_integer_column[Availability]]
+    we_s2: Mapped[_integer_column[Availability]]
+    we_s3: Mapped[_integer_column[Availability]]
+    we_b: Mapped[_integer_column[Availability]]
+    th_s1: Mapped[_integer_column[Availability]]
+    th_s2: Mapped[_integer_column[Availability]]
+    th_s3: Mapped[_integer_column[Availability]]
+    th_b: Mapped[_integer_column[Availability]]
+    fr_s1: Mapped[_integer_column[Availability]]
+    fr_s2: Mapped[_integer_column[Availability]]
+    fr_s3: Mapped[_integer_column[Availability]]
+    fr_b: Mapped[_integer_column[Availability]]
 
     @staticmethod  # SQLAlchemy tries to find a column...
     def to_schema(self: TimetableModel) -> TimetableSchema:
@@ -674,13 +684,13 @@ class TimetableModel(DBBaseModel):
 class ScopeModel(DBBaseModel):
     __tablename__ = "scopes"
 
-    scope: Column | str = Column(Text, primary_key=True, unique=True, nullable=False)
-    group_: Column | str = Column(Text, nullable=False)
+    scope: Mapped[str] = mc(Text, primary_key=True, unique=True, nullable=False)
+    group_: Mapped[_text_column[str]]
 
 
 class VerificationCodesModel(DBBaseModel):
     __tablename__ = "verification_code"
 
-    user_id: Column | int = Column(Integer, primary_key=True, unique=True, autoincrement=False, nullable=False)
-    email: Column | str = Column(Text, nullable=False)
-    code: Column | str = Column(Text, nullable=False)
+    user_id: Mapped[int] = mc(Integer, primary_key=True, unique=True, autoincrement=False, nullable=False)
+    email: Mapped[_text_column[str]]
+    code: Mapped[_text_column[str]]

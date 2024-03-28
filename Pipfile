@@ -11,7 +11,7 @@ name = "pypi"
 aenum = "~=3.1.15"
 annotated-types = "~=0.6.0"
 cryptography = "~=42.0.5"
-databases = { version = "~=0.8.0", extras = ["aiosqlite"] }
+databases = { version = "~=0.9.0", extras = ["aiosqlite"] }
 fastapi = "~=0.110.0"
 fastapi-mail = "~=1.4.1"
 itsdangerous = "~=2.1.2"
@@ -24,12 +24,12 @@ pyjwt = "~=2.8.0"
 python-multipart = "~=0.0.9"
 pyyaml = "~=6.0.1"
 reportlab = "~=4.1.0"
-sqlalchemy = "*"  # databases==0.8.0 requires following version: sqlalchemy>=1.4.42,<1.5 --> can't use latest version :(
+sqlalchemy = "~=2.0.29"
 uvicorn = { version = "~=0.29.0", extras = ["standard"] }
 
 [dev-packages]
 black = "~=24.3.0"
 
 [requires]
-python_version = "3.11"
-python_full_version = "3.11.2"
+python_version = "3.12"
+python_full_version = "3.12.2"
