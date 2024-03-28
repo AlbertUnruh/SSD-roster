@@ -460,6 +460,7 @@ class MinimalUserSchema(BaseModel):
     displayed_name: str
     age: Annotated[int, annotated_types.Ge(0)]
     scopes: Annotated[str, Literal["PUBLIC", "USER", "ADMIN", "OWNER"]]
+    fully_verified: bool
 
 
 class UserResponseSchema(ResponseSchema, MinimalUserSchema):
@@ -480,6 +481,7 @@ class UserResponseSchema(ResponseSchema, MinimalUserSchema):
                     "age": 23,
                     "timetable": "/timetable/42",
                     "scopes": "USER",
+                    "fully_verified": True,
                 }
             ]
         }

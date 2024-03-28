@@ -67,6 +67,7 @@ async def users_api(
                 displayed_name=db_user.displayed_name,
                 age=calculate_age(db_user.birthday),
                 scopes=db_user.scopes,
+                fully_verified=db_user.email_verified and db_user.user_verified,
             )
         )
 
@@ -193,6 +194,7 @@ async def see_user_api(
         age=calculate_age(birthday),
         timetable=request.app.url_path_for("see_users_timetable", user_id=user_id),
         scopes=requested_user.scopes,
+        fully_verified=requested_user.email_verified and requested_user.user_verified,
     )
 
 
