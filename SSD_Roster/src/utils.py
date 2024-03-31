@@ -10,7 +10,7 @@ __all__ = (
 # standard library
 import sys
 import traceback
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 
 # typing
 from typing import Awaitable, Literal, overload, TypeVar
@@ -42,5 +42,5 @@ async def might_raise(
 
 
 def calculate_age(reference: date) -> int:
-    today = date.fromordinal(datetime.utcnow().toordinal())
+    today = date.fromordinal(datetime.now(timezone.utc).toordinal())
     return today.year - reference.year - ((today.month, today.day) < (reference.month, reference.day))
