@@ -16,7 +16,7 @@ from SSD_Roster.src import utils
 T = TypeVar("T")
 
 
-async def demo_awaitable(callable: Callable[..., T]) -> T:  # noqa A002
+async def demo_awaitable(callable: Callable[..., T]) -> T:  # noqa: A002
     return callable()
 
 

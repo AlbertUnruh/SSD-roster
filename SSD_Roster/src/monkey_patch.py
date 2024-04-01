@@ -28,7 +28,7 @@ def patch_passlib():
             k: getattr(passlib.handlers.bcrypt, k)  # noqa
             for k in ("_BcryptCommon", "_detect_pybcrypt", "log", "unicode")
         }
-        exec(code, env)  # noqa S102
+        exec(code, env)  # noqa: S102
         passlib.handlers.bcrypt._BcryptBackend._load_backend_mixin = env["_BcryptBackend"]._load_backend_mixin  # noqa
         passlib.handlers.bcrypt.bcrypt._backend_mixin_map["bcrypt"] = env["_BcryptBackend"]  # noqa
         passlib.__version__ += "-patch"  # noqa

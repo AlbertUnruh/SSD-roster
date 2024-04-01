@@ -112,7 +112,7 @@ async def get_current_user(
         status_code=401, detail="Could not validate credentials", headers={"WWW-Authenticate": authenticate_value}
     )
 
-    if token == "PUBLIC":  # noqa S105  # not a password, but a default
+    if token == "PUBLIC":  # noqa: S105  # not a password, but a default
         # a public user; ID isn't accessed --> can have any value
         token_data = TokenSchema(user_id=69, scopes=GroupedScope.PUBLIC.split())
         user = None
@@ -136,7 +136,7 @@ async def get_current_user(
                     token_scopes.extend(getattr(GroupedScope, _s).split())
             token_data = TokenSchema(user_id=user_id, scopes=token_scopes)
         except (PyJWTError, ValidationError):
-            raise credentials_exception  # noqa R100
+            raise credentials_exception  # noqa: R100
 
         user = await database.fetch_one(UserModel.select().where(UserModel.user_id == token_data.user_id))
         if user is None:
