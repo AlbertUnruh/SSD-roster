@@ -18,5 +18,5 @@ class Roster(RosterSchema):
         year, week = self.date_anchor
         return date.fromisocalendar(year, week, 1), date.fromisocalendar(year, week, 5)
 
-    def export_to_pdf(self):  # noqa ANN201
+    def export_to_pdf(self):  # noqa: ANN201
         raise NotImplementedError  # ToDo: use src.pdf.create_roster

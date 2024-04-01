@@ -24,7 +24,7 @@ if settings.OVERRIDE_422_WITH_400:
     openapi_utils.HTTP_422_UNPROCESSABLE_ENTITY = HTTP_400_BAD_REQUEST
 
 
-async def exception_handler(request: Request, exc: StarletteHTTPException):  # noqa ANN201
+async def exception_handler(request: Request, exc: StarletteHTTPException):  # noqa: ANN201
     code = exc.status_code
     return templates.TemplateResponse(
         request,
@@ -35,7 +35,7 @@ async def exception_handler(request: Request, exc: StarletteHTTPException):  # n
     )
 
 
-async def validation_exception_handler(request: Request, exc: RequestValidationError):  # noqa ANN201
+async def validation_exception_handler(request: Request, exc: RequestValidationError):  # noqa: ANN201
     code, detail = (
         (HTTP_400_BAD_REQUEST, "Bad Request")
         if settings.OVERRIDE_422_WITH_400

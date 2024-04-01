@@ -27,7 +27,7 @@ patch_passlib()
 
 
 @asynccontextmanager
-async def lifespan(_):  # noqa ANN001
+async def lifespan(_):  # noqa: ANN001
     try:
         await database.connect()
         await db_setup()
