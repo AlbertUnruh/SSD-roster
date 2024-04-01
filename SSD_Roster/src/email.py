@@ -34,13 +34,14 @@ fastmail = FastMail(
         MAIL_FROM=settings.MAIL.FROM,
         MAIL_FROM_NAME=settings.MAIL.FROM_NAME,
         SUPPRESS_SEND=settings.MAIL.DISABLED,
+        USE_CREDENTIALS=settings.MAIL.USE_CREDENTIALS,
     )
 )
 
 
 async def send(message: MessageSchema, *, silent: bool = True) -> bool:
     ok, _ = await might_raise(fastmail.send_message(message), silent)
-    return ok and not settings.MAIL.DISABLED
+    return ok and not fastmail.config.SUPPRESS_SEND
 
 
 async def send_verification_email(request: Request, to: EmailStr, code: str) -> bool:

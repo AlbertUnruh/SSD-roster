@@ -40,6 +40,7 @@ class Mail(BaseModel):
     STARTTLS: bool
     SSL_TLS: bool
     DISABLED: bool
+    USE_CREDENTIALS: bool
 
 
 class Settings(BaseSettings):

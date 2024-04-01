@@ -3,6 +3,7 @@ line-length = 120
 target-version = ['py311']
 include = '\.pyi?$'
 
-[tool.pytest]
+[tool.pytest.ini_options]
+addopts = '--envfile .env.test'
 testpaths = ['tests']
 asyncio_mode = 'auto'
