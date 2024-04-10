@@ -5,7 +5,7 @@
 <a href="https://github.com/psf/black"><img src="https://img.shields.io/badge/Code%20Style-black-000000.svg" alt="[Code Style: black]"></a>
 <img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2FAlbertUnruh%2FSSD-roster%2Fdevelop%2FPipfile.lock&query=%24._meta.requires.python_full_version&logo=python&label=Python%20Version" alt="[Python Version]">
 </br>
-<img src="https://img.shields.io/github/issues-pr-raw/AlbertUnruh/SSD-roster?label=Open%20PRss" alt="[Open PRs]">
+<img src="https://img.shields.io/github/issues-pr-raw/AlbertUnruh/SSD-roster?label=Open%20PRs" alt="[Open PRs]">
 <img src="https://img.shields.io/github/issues-raw/AlbertUnruh/SSD-roster?label=Open%20Issues" alt="[Open Issues]">
 </br>
 <img src="https://img.shields.io/github/directory-file-count/AlbertUnruh/SSD-roster?label=Files" alt="[Files]">
