@@ -23,7 +23,7 @@ pydantic-settings = "~=2.2.1"
 pyjwt = "~=2.8.0"
 python-multipart = "~=0.0.9"
 pyyaml = "~=6.0.1"
-reportlab = "~=4.1.0"
+reportlab = "~=4.2.0"
 sqlalchemy = "~=2.0.29"
 uvicorn = { version = "~=0.29.0", extras = ["standard"] }
 
