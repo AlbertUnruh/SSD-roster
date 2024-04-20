@@ -86,3 +86,5 @@ per-file-ignores =
     SSD_Roster/routes/*.py:ANN201,DAL000
     SSD_Roster/app.py:ANN201,DAL000
     SSD_Roster/src/monkey_patch.py:ANN201
+    SSD_Roster/src/abc.py:A005
+    SSD_Roster/src/email.py:A005
