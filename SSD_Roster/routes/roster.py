@@ -169,7 +169,7 @@ async def see_roster_api(
         response.status_code = 200
         return RosterResponseSchema(
             message=f"Roster for year {year} and week {week} "
-            f"(last updated: {roster_.published_at.strftime('%d/%m/%Y, %H:%M:%S')})",
+            f"(last updated: {roster_.published_at.strftime("%d/%m/%Y, %H:%M:%S")})",
             code=200,
             roster=roster_,
         )

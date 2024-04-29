@@ -20,7 +20,7 @@ _CHARACTERS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
 
 
 def generate_code() -> str:
-    return "{}-{}-{}-{}".format(*["".join(choices(_CHARACTERS, k=2)) for _ in range(4)])
+    return "{}-{}-{}-{}".format(*["".join(choices(_CHARACTERS, k=2)) for _ in range(4)])  # noqa S311
 
 
 async def verify_code(user: UserSchema, code: str) -> bool:
