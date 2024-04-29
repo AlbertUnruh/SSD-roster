@@ -12,9 +12,9 @@ from fastapi import APIRouter, Request, Security
 from fastapi.responses import HTMLResponse
 
 # local
-from SSD_Roster.src.models import Scope, UserSchema
-from SSD_Roster.src.oauth2 import get_current_user
-from SSD_Roster.src.templates import templates
+from SSD_Roster.core.models import Scope, UserSchema
+from SSD_Roster.core.oauth2 import get_current_user
+from SSD_Roster.core.templates import templates
 
 
 router = APIRouter(prefix="/logs")

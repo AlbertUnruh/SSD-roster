@@ -8,8 +8,8 @@ from fastapi import APIRouter, Depends, Request, Security
 from fastapi.responses import HTMLResponse, ORJSONResponse, RedirectResponse, Response
 
 # local
-from SSD_Roster.src.database import database
-from SSD_Roster.src.models import (
+from SSD_Roster.core.database import database
+from SSD_Roster.core.models import (
     MessageSchema,
     MessagesResponseSchema,
     MinimalUserSchema,
@@ -21,8 +21,8 @@ from SSD_Roster.src.models import (
     UserSchema,
     UsersResponseSchema,
 )
-from SSD_Roster.src.oauth2 import get_current_user
-from SSD_Roster.src.utils import calculate_age
+from SSD_Roster.core.oauth2 import get_current_user
+from SSD_Roster.core.utils import calculate_age
 
 
 router = APIRouter(

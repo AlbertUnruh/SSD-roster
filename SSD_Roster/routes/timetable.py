@@ -11,8 +11,8 @@ from fastapi import APIRouter, Form, Request, Security
 from fastapi.responses import HTMLResponse, ORJSONResponse, RedirectResponse, Response
 
 # local
-from SSD_Roster.src.database import database
-from SSD_Roster.src.models import (
+from SSD_Roster.core.database import database
+from SSD_Roster.core.models import (
     PageID,
     Scope,
     TimetableModel,
@@ -22,9 +22,9 @@ from SSD_Roster.src.models import (
     UserModel,
     UserSchema,
 )
-from SSD_Roster.src.oauth2 import get_current_user
-from SSD_Roster.src.templates import templates
-from SSD_Roster.src.timetable import Timetable
+from SSD_Roster.core.oauth2 import get_current_user
+from SSD_Roster.core.templates import templates
+from SSD_Roster.core.timetable import Timetable
 
 
 router = APIRouter(

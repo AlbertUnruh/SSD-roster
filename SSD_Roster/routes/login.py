@@ -15,12 +15,12 @@ from fastapi import APIRouter, Form, Request
 from fastapi.responses import HTMLResponse, ORJSONResponse, RedirectResponse, Response
 
 # local
+from SSD_Roster.core.database import database
+from SSD_Roster.core.messages import flash
+from SSD_Roster.core.models import LoginResponseSchema, MessageCategory, ResponseSchema, UserModel, UserSchema
+from SSD_Roster.core.oauth2 import authenticate_user, create_access_token
+from SSD_Roster.core.templates import templates
 from SSD_Roster.routes.user import get_messages_api
-from SSD_Roster.src.database import database
-from SSD_Roster.src.messages import flash
-from SSD_Roster.src.models import LoginResponseSchema, MessageCategory, ResponseSchema, UserModel, UserSchema
-from SSD_Roster.src.oauth2 import authenticate_user, create_access_token
-from SSD_Roster.src.templates import templates
 
 
 router = APIRouter(

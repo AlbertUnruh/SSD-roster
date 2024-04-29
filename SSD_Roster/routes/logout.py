@@ -12,10 +12,10 @@ from fastapi import APIRouter, Request
 from fastapi.responses import RedirectResponse, Response
 
 # local
-from SSD_Roster.src.database import database
-from SSD_Roster.src.environment import settings
-from SSD_Roster.src.messages import flash
-from SSD_Roster.src.models import MessageCategory, UserModel
+from SSD_Roster.core.database import database
+from SSD_Roster.core.environment import settings
+from SSD_Roster.core.messages import flash
+from SSD_Roster.core.models import MessageCategory, UserModel
 
 
 router = APIRouter(

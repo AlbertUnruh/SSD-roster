@@ -14,10 +14,10 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.security import OAuth2PasswordRequestForm
 
 # local
-from SSD_Roster.src.messages import flash
-from SSD_Roster.src.models import MessageCategory
-from SSD_Roster.src.oauth2 import authenticate_user, create_access_token
-from SSD_Roster.src.templates import templates
+from SSD_Roster.core.messages import flash
+from SSD_Roster.core.models import MessageCategory
+from SSD_Roster.core.oauth2 import authenticate_user, create_access_token
+from SSD_Roster.core.templates import templates
 
 
 router = APIRouter()

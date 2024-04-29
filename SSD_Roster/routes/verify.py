@@ -9,9 +9,9 @@ from fastapi import APIRouter, Form, Request, Security
 from fastapi.responses import HTMLResponse, ORJSONResponse, RedirectResponse, Response
 
 # local
-from SSD_Roster.src.database import database
-from SSD_Roster.src.messages import flash
-from SSD_Roster.src.models import (
+from SSD_Roster.core.database import database
+from SSD_Roster.core.messages import flash
+from SSD_Roster.core.models import (
     MessageCategory,
     MinimalUserSchema,
     ResponseSchema,
@@ -22,10 +22,10 @@ from SSD_Roster.src.models import (
     UsersResponseSchema,
     VerificationCodesModel,
 )
-from SSD_Roster.src.oauth2 import get_current_user, get_password_hash
-from SSD_Roster.src.templates import templates
-from SSD_Roster.src.utils import calculate_age
-from SSD_Roster.src.verification import verify_code
+from SSD_Roster.core.oauth2 import get_current_user, get_password_hash
+from SSD_Roster.core.templates import templates
+from SSD_Roster.core.utils import calculate_age
+from SSD_Roster.core.verification import verify_code
 
 
 router = APIRouter(

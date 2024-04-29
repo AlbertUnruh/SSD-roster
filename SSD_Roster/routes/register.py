@@ -9,12 +9,12 @@ from fastapi import APIRouter, Form, Request
 from fastapi.responses import HTMLResponse, ORJSONResponse, RedirectResponse, Response
 
 # local
-from SSD_Roster.src.database import database
-from SSD_Roster.src.email import send_verification_email
-from SSD_Roster.src.messages import flash
-from SSD_Roster.src.models import MessageCategory, ResponseSchema, UserModel, VerificationCodesModel
-from SSD_Roster.src.templates import templates
-from SSD_Roster.src.verification import generate_code
+from SSD_Roster.core.database import database
+from SSD_Roster.core.email import send_verification_email
+from SSD_Roster.core.messages import flash
+from SSD_Roster.core.models import MessageCategory, ResponseSchema, UserModel, VerificationCodesModel
+from SSD_Roster.core.templates import templates
+from SSD_Roster.core.verification import generate_code
 
 
 router = APIRouter(

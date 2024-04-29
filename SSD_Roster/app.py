@@ -13,13 +13,13 @@ from starlette.middleware.sessions import SessionMiddleware
 
 # local
 from SSD_Roster import __version__
+from SSD_Roster.core.database import database
+from SSD_Roster.core.database import setup as db_setup
+from SSD_Roster.core.environment import settings
+from SSD_Roster.core.exception_handlers import exception_handler, validation_exception_handler
+from SSD_Roster.core.models import GroupedScope
+from SSD_Roster.core.monkey_patch import patch_passlib
 from SSD_Roster.routes import login, logout, logs, register, root, roster, timetable, user, verify
-from SSD_Roster.src.database import database
-from SSD_Roster.src.database import setup as db_setup
-from SSD_Roster.src.environment import settings
-from SSD_Roster.src.exception_handlers import exception_handler, validation_exception_handler
-from SSD_Roster.src.models import GroupedScope
-from SSD_Roster.src.monkey_patch import patch_passlib
 
 
 logs.inject()  # manipulates sys.stdout and sys.stderr to get logged (redirects to behave normally)
