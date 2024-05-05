@@ -29,8 +29,9 @@ router = APIRouter()
     response_class=HTMLResponse,
 )
 async def root(request: Request):
-    for category in MessageCategory:  # type: ignore  # ToDo: remove in demo messages
-        flash(request, f"A demo message with category {category}", category)
+    if settings.ENVIRONMENT == "development":  # useful to view coloring shemes during development
+        for category in MessageCategory:  # type: ignore
+            flash(request, f"A demo message with category {category}", category)
     return templates.TemplateResponse(request, "root.html")
 
 
