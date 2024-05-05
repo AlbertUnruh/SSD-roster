@@ -59,7 +59,7 @@ async def setup() -> None:
             await database.execute(UserModel.delete().where(UserModel.username == f"demo-{group}"))  # type: ignore
 
     # demo-users allowed?
-    elif settings.ALLOW_DEMO_USERS_IN_DEVELOPMENT:
+    elif settings.ALLOW_DEMO_USERS_IN_DEVELOPMENT and settings.ENVIRONMENT == "development":
         for group in GroupedScope._members():  # noqa
             username = f"demo-{group}"
             # create demo-users (if they don't already exist)
