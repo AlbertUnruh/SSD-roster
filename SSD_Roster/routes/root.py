@@ -14,7 +14,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.security import OAuth2PasswordRequestForm
 
 # local
-from SSD_Roster.environment import settings
+from SSD_Roster.core.environment import settings
 from SSD_Roster.core.messages import flash
 from SSD_Roster.core.models import MessageCategory
 from SSD_Roster.core.oauth2 import authenticate_user, create_access_token
