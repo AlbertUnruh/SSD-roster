@@ -9,7 +9,7 @@ name = "pypi"
 # then they need to be added to ``.isort.cfg`` (into "known_thirdparty") and ``.flake8`` (into "known-modules")
 #
 aenum = "~=3.1.15"
-annotated-types = "~=0.6.0"
+annotated-types = "~=0.7.0"
 cryptography = "~=42.0.7"
 databases = { version = "~=0.9.0", extras = ["aiosqlite"] }
 fastapi = "~=0.111.0"
