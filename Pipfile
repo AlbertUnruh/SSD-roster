@@ -19,7 +19,7 @@ jinja2 = "~=3.1.4"
 orjson = "~=3.10.3"
 passlib = { version = "~=1.7.4", extras = ["bcrypt"] }
 pydantic = { version = "~=2.7.2", extras = ["email"] }
-pydantic-settings = "~=2.2.1"
+pydantic-settings = "~=2.3.1"
 pyjwt = "~=2.8.0"
 python-multipart = "~=0.0.9"
 pyyaml = "~=6.0.1"
