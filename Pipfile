@@ -20,7 +20,7 @@ orjson = "~=3.10.6"
 passlib = { version = "~=1.7.4", extras = ["bcrypt"] }
 pydantic = { version = "~=2.8.2", extras = ["email"] }
 pydantic-settings = "~=2.3.4"
-pyjwt = "~=2.8.0"
+pyjwt = "~=2.9.0"
 python-multipart = "~=0.0.9"
 pyyaml = "~=6.0.1"
 reportlab = "~=4.2.2"
