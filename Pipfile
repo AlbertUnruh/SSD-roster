@@ -28,7 +28,7 @@ sqlalchemy = "~=2.0.32"
 uvicorn = { version = "~=0.30.5", extras = ["standard"] }
 
 [dev-packages]
-black = "~=24.4.2"
+black = "~=24.8.0"
 
 [requires]
 python_version = "3.12"
