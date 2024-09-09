@@ -16,6 +16,8 @@
 # SSD Roster
 A project by AlbertUnruh.
 
+> [!IMPORTANT]
+> I won't work on this anymore. Maybe I come back to it in the future but I don't know...
 
 ---
 
